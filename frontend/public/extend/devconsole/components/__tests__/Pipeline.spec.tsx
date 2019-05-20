@@ -55,4 +55,20 @@ describe('Pipeline Run List', () => {
     expect(pipelineRunWrapper.exists()).toBe(true);
     expect(pipelineRunWrapper.find(ListPage).prop('kind')).toMatch('PipelineRun');
   });
+
+  it('List renders Pipeline selector based on name ', () => {
+    const selector = {
+      'tekton.dev/pipeline': 'pipeline-a',
+    }
+    expect(pipelineRunWrapper.find(ListPage).prop('selector')).toMatchObject(selector);
+  });
+
+  it('List renders Pipeline with canCreate false', () => {
+    expect(pipelineRunWrapper.find(ListPage).prop('canCreate')).toBeFalsy();
+  });
+
+  it('List renders Pipeline with default filter', () => {
+    expect(pipelineWrapper.find(ListPage).prop('rowFilters')[0]['type']).toEqual('pipeline-status');
+    expect(pipelineWrapper.find(ListPage).prop('rowFilters')[0]['items']).toHaveLength(3);
+  });
 });
