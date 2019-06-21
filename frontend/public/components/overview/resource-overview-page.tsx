@@ -14,14 +14,19 @@ import { BuildOverview } from './build-overview';
 import { NetworkingOverview } from './networking-overview';
 import { OverviewItem } from '.';
 import { resourceOverviewPages } from './resource-overview-pages';
+import { KnativeOverview } from './Knative-overview';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
 
-export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps>= ({item: {buildConfigs, routes, services}}) => (
+export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps> = ({ item: { buildConfigs, routes, services, ksroutes, revisions, configurations } }) => (
   <div className="overview__sidebar-pane-body">
-    <BuildOverview buildConfigs={buildConfigs} />
-    <NetworkingOverview services={services} routes={routes} />
+    {!configurations ? (
+      <React.Fragment>
+        <BuildOverview buildConfigs={buildConfigs} />
+        <NetworkingOverview services={services} routes={routes} />
+      </React.Fragment>
+    ) : <KnativeOverview ksroutes={ksroutes} configurations={configurations} revisions={revisions} />}
   </div>
 );
 

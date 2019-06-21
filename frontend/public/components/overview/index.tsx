@@ -1128,6 +1128,9 @@ export type OverviewItem = {
   routes: K8sResourceKind[];
   services: K8sResourceKind[];
   status?: React.ReactNode;
+  ksroutes?: K8sResourceKind[];
+  configurations?: K8sResourceKind[];
+  revisions?: K8sResourceKind[];
 };
 
 export type OverviewGroup = {

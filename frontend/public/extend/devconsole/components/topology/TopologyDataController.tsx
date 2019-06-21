@@ -3,6 +3,8 @@ import * as React from 'react';
 import { TopologyDataResources, TopologyDataModel } from './topology-types';
 import { TransformTopologyData } from './topology-utils';
 import { Firehose } from '../../../../components/utils';
+import { referenceForModel } from '../../../../module/k8s';
+import { ConfigurationModel, KsrouteModel, RevisionModel } from '../../models';
 
 export interface RenderProps {
   data?: TopologyDataModel;
@@ -95,6 +97,24 @@ export default class TopologyDataController extends React.PureComponent<
         kind: 'BuildConfig',
         namespace,
         prop: 'buildconfigs',
+      },
+      {
+        isList: true,
+        kind: referenceForModel(RevisionModel),
+        namespace,
+        prop: 'revisions',
+      },
+      {
+        isList: true,
+        kind: referenceForModel(ConfigurationModel),
+        namespace,
+        prop: 'configurations',
+      },
+      {
+        isList: true,
+        kind: referenceForModel(KsrouteModel),
+        namespace,
+        prop: 'ksroutes',
       },
     ];
     return (

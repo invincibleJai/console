@@ -6,7 +6,7 @@ export const makeReduxID = (k8sKind = {}, query) => {
     qs = `---${JSON.stringify(query)}`;
   }
 
-  return `${k8sKind.plural}${qs}`;
+  return `${k8sKind.plural}-${k8sKind.apiVersion}${qs}`;
 };
 
 /** @type {(namespace: string, labelSelector?: any, fieldSelector?: any, name?: string) => {[key: string]: string}} */

@@ -25,6 +25,9 @@ export interface TopologyDataResources {
   deployments: Resource;
   replicasets: Resource;
   buildconfigs: Resource;
+  ksroutes?: Resource;
+  configurations?: Resource;
+  revisions?: Resource;
 }
 
 export interface Node {
@@ -71,7 +74,7 @@ export interface Pod {
   spec: {};
 }
 
-export interface TopologyDataObject<D = {}> {
+export interface TopologyDataObject<D = WorkloadData> {
   id: string;
   name: string;
   type: string;

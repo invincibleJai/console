@@ -123,6 +123,14 @@ export class TransformTopologyData {
   getTopologyData() {
     return this._topologyData;
   }
+
+  /**
+   * get the route data
+   */
+  getRouteData(ksroute) {
+    return !_.isEmpty(ksroute.status) ? ksroute.status.url : null;
+  }
+
   /**
    * Tranforms the k8s resources objects into topology data
    * @param targetDeployment
@@ -151,8 +159,12 @@ export class TransformTopologyData {
       const service = this.getService(deploymentConfig);
       const route = this.getRoute(service);
       const buildConfigs = this.getBuildConfigs(deploymentConfig);
+      // list of Knative resources
+      const ksroute = this.getKSRoute(service);
+      const configurations = this.getConfigurations(replicationController);
+      const revisions = this.getRevisions(replicationController);
       // list of resources in the
-      const nodeResources = [deploymentConfig, replicationController, service, route, buildConfigs];
+      const nodeResources = [deploymentConfig, replicationController, service, route, buildConfigs, ksroute, configurations, revisions];
       // populate the graph Data
       this.createGraphData(deploymentConfig);
       // add the lookup object
@@ -170,7 +182,7 @@ export class TransformTopologyData {
           return resource;
         }),
         data: {
-          url: !_.isEmpty(route.spec) ? getRouteWebURL(route) : null,
+          url: !_.isEmpty(route.spec) ? getRouteWebURL(route) : this.getRouteData(ksroute),
           editUrl: deploymentsAnnotations['app.openshift.io/edit-url'],
           builderImage: deploymentsLabels['app.kubernetes.io/name'],
           isKnativeResource: this.isKnativeServing(deploymentConfig, 'metadata.labels'),
@@ -222,6 +234,69 @@ export class TransformTopologyData {
     });
     return route;
   }
+
+  /**
+   * get the kmnative route information from the service
+   * @param service
+   */
+  private getKSRoute(service: ResourceProps): ResourceProps {
+    // get the knative route
+    const route = {
+      kind: 'Route',
+      metadata: {},
+      status: {},
+      spec: {},
+    };
+    _.forEach(this.resources.ksroutes.data, (routeConfig) => {
+      if (_.get(service, 'metadata.name').includes(_.get(routeConfig, 'metadata.name'))) {
+        _.merge(route, routeConfig);
+      }
+    });
+    return route;
+  }
+
+   /**
+   * get the configuration information from the service
+   * @param replicationController
+   */
+  private getConfigurations(replicationController: ResourceProps): ResourceProps {
+    // get the knative configuration
+    debugger;
+    const configuration = {
+      kind: 'Configuration',
+      metadata: {},
+      status: {},
+      spec: {},
+    };
+    _.forEach(this.resources.configurations.data, (config) => {
+      if (_.get(replicationController, 'metadata.name').includes(_.get(config, 'metadata.name'))) {
+        _.merge(configuration, config);
+      }
+    });
+    return configuration;
+  }
+
+   /**
+   * get the revision information from the service
+   * @param replicationController
+   */
+  private getRevisions(replicationController: ResourceProps): ResourceProps {
+    // get the knative revision
+    debugger;
+    const revision = {
+      kind: 'Revision',
+      metadata: {},
+      status: {},
+      spec: {},
+    };
+    _.forEach(this.resources.revisions.data, (revisionConfig) => {
+      if (_.get(replicationController, 'metadata.name').includes(_.get(revisionConfig, 'metadata.name'))) {
+        _.merge(revision, revisionConfig);
+      }
+    });
+    return revision;
+  }
+
   private getBuildConfigs(deploymentConfig: ResourceProps): ResourceProps {
     const buildConfig = {
       kind: 'BuildConfig',

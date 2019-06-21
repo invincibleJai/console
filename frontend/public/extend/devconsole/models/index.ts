@@ -39,3 +39,43 @@ export const GitSourceAnalysisModel: K8sKind = {
   namespaced: true,
   kind: 'GitSourceAnalysis',
 };
+
+export const RevisionModel: K8sKind = {
+  apiGroup: 'serving.knative.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Revision',
+  path: 'revisions',
+  plural: 'revisions',
+  abbr: 'KSREV',
+  namespaced: true,
+  kind: 'Revision',
+  id: 'revision',
+  labelPlural: 'Revisions',
+};
+
+export const ConfigurationModel: K8sKind = {
+  apiGroup: 'serving.knative.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Configuration',
+  path: 'configurations',
+  plural: 'configurations',
+  abbr: 'KSC',
+  namespaced: true,
+  kind: 'Configuration',
+  id: 'configuration',
+  labelPlural: 'Configurations',
+};
+
+export const KsrouteModel: K8sKind = {
+  apiGroup: 'serving.knative.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Route',
+  labelPlural: 'KsRoutes',
+  path: 'routes',
+  plural: 'routes',
+  abbr: 'KSRT',
+  namespaced: true,
+  kind: 'Route',
+  id: 'ksroute',
+  crd: true,
+};

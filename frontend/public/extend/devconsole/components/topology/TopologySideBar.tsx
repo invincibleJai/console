@@ -45,6 +45,13 @@ const TopologySideBar: React.FunctionComponent<TopologySideBarProps> = ({
       services,
       buildConfigs,
     };
+
+    if (item.data.isKnativeResource) {
+      const ksroutes = metadataUIDCheck(item.resources.filter((o) => (o.kind === 'Route' && o.apiVersion && o.apiVersion === 'serving.knative.dev/v1alpha1')));
+      const configurations = metadataUIDCheck(item.resources.filter((o) => (o.kind === 'Configuration' && o.apiVersion && o.apiVersion === 'serving.knative.dev/v1alpha1')));
+      const revisions = metadataUIDCheck(item.resources.filter((o) => (o.kind === 'Revision' && o.apiVersion && o.apiVersion === 'serving.knative.dev/v1alpha1')));
+      itemtoShowOnSideBar = { ...itemtoShowOnSideBar, ...{ ksroutes, configurations, revisions } }
+    }
   }
 
   return (
