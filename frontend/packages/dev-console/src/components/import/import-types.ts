@@ -6,6 +6,21 @@ export interface FirehoseList {
   [key: string]: any;
 }
 
+export interface DeployImageFormData {
+  project: ProjectData;
+  name: string;
+  searchTerm: string;
+  isi: ImageStreamImageData;
+  image: ImageStreamImageData;
+  loading: boolean;
+  labels: { [name: string]: string };
+  env: { [name: string]: string };
+  route: RouteData;
+  build: BuildData;
+  deployment: DeploymentData;
+  application: ApplicationData;
+}
+
 export interface GitImportFormData {
   name: string;
   project: ProjectData;
@@ -27,6 +42,14 @@ export interface ImageData {
   selected: string;
   recommended: string;
   tag: string;
+  ports: ContainerPort[];
+}
+
+export interface ImageStreamImageData {
+  name: string;
+  image: object;
+  tag: string;
+  status: string;
   ports: ContainerPort[];
 }
 
