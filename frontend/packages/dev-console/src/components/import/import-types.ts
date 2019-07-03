@@ -8,17 +8,18 @@ export interface FirehoseList {
 
 export interface DeployImageFormData {
   project: ProjectData;
+  application: ApplicationData;
   name: string;
   searchTerm: string;
   isi: ImageStreamImageData;
   image: ImageStreamImageData;
+  serverless: ServerlessData;
   loading: boolean;
   labels: { [name: string]: string };
   env: { [name: string]: string };
   route: RouteData;
   build: BuildData;
   deployment: DeploymentData;
-  application: ApplicationData;
 }
 
 export interface GitImportFormData {
@@ -99,6 +100,10 @@ export interface DeploymentData {
   };
   replicas: number;
   env: (NameValuePair | NameValueFromPair)[];
+}
+
+export interface ServerlessData {
+  trigger: boolean;
 }
 
 export enum GitTypes {

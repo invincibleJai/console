@@ -8,6 +8,7 @@ import {
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { SelectorInput } from '@console/internal/components/utils';
+import { KsServiceModel } from '../../models/knative'
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
 import { DeployImageFormData } from './import-types';
@@ -110,6 +111,48 @@ export const createBuildConfig = (
   };
 
   return k8sCreate(BuildConfigModel, buildConfig, dryRun ? dryRunOpt : {});
+};
+
+export const createKnativeConfig = (
+  formData: DeployImageFormData,
+  cpuResource: string = '100m',
+  memoryResource: string = '100Mi',
+): Promise<K8sResourceKind> => {
+  const {
+    project: { name: namespace },
+    name,
+    isi: { name: isiName, tag },
+  } = formData;
+
+  const knativeResource = {
+    apiVersion: 'serving.knative.dev/v1alpha1',
+    kind: 'Service',
+    metadata: {
+      name,
+      namespace,
+    },
+    spec: {
+      runLatest: {
+        configuration: {
+          revisionTemplate: {
+            spec: {
+              container: {
+                image: `${isiName}:${tag}`,
+                resources: {
+                  requests: {
+                    cpu: `${cpuResource}`,
+                    memory: `${memoryResource}`,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
+  return k8sCreate(KsServiceModel, knativeResource);
 };
 
 export const createDeploymentConfig = (
@@ -267,20 +310,29 @@ export const createResources = (
   const {
     route: { create: canCreateRoute },
     isi: { ports },
+    serverless: { trigger }
   } = formData;
 
-  const requests: Promise<K8sResourceKind>[] = [
-    createDeploymentConfig(formData, dryRun),
-    createImageStream(formData, dryRun),
-    createBuildConfig(formData, dryRun),
-  ];
+  let requests: Promise<K8sResourceKind>[];
+  if (trigger) {
+    requests = [
+      createKnativeConfig(formData),
+    ];
 
-  if (!_.isEmpty(ports)) {
-    requests.push(createService(formData, dryRun));
-    if (canCreateRoute) {
-      requests.push(createRoute(formData, dryRun));
+  } else {
+    requests = [
+      createDeploymentConfig(formData, dryRun),
+      createImageStream(formData, dryRun),
+      createBuildConfig(formData, dryRun),
+    ];
+    if (!_.isEmpty(ports)) {
+      requests.push(createService(formData, dryRun));
+      if (canCreateRoute) {
+        requests.push(createRoute(formData, dryRun));
+      }
     }
   }
+
 
   return Promise.all(requests);
 };
