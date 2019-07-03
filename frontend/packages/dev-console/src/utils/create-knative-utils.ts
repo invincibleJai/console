@@ -3,8 +3,8 @@ import { KsServiceModel } from '../models';
 
 export const createKnativeService = (
   name: string,
-  namespace: string,
-  imageStreamName: string,
+  namespace: string,	
+  imageStreamName: string,	
   imageStreamTag: string,
   cpuResource: string = '100m',
   memoryResource: string = '100Mi',
