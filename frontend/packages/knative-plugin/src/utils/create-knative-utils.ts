@@ -18,6 +18,7 @@ export const createKnativeService = (
   name: string,
   namespace: string,
   scaling: ServerlessScaling,
+  port: string = '8080',
   imageStreamName: string,
   imageStreamTag?: string,
   cpuResource: string = '100m',
@@ -45,6 +46,9 @@ export const createKnativeService = (
           ...(scaling.concurrencylimit && { containerConcurrency: scaling.concurrencylimit }),
           container: {
             image: `${imageStreamName}${imageStreamTag ? `:${imageStreamTag}` : ''}`,
+            ports: {
+              containerPort: `${port}`,
+            },
             resources: {
               requests: {
                 cpu: `${cpuResource}`,

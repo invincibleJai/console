@@ -259,7 +259,7 @@ export const createResources = async (
   const {
     application: { name: applicationName },
     project: { name: projectName },
-    route: { create: canCreateRoute },
+    route: { create: canCreateRoute, targetPort },
     image: { ports },
   } = formData;
 
@@ -280,6 +280,7 @@ export const createResources = async (
         applicationName,
         projectName,
         formData.serverless.scaling,
+        targetPort,
         imageStreamResponse.status.dockerImageRepository,
       ),
     ]);

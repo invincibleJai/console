@@ -266,7 +266,7 @@ export const createResources = (
   dryRun: boolean = false,
 ): Promise<K8sResourceKind[]> => {
   const {
-    route: { create: canCreateRoute },
+    route: { create: canCreateRoute, targetPort },
     project: { name: projectName },
     name,
     isi: { name: isiName, tag, ports },
@@ -287,7 +287,14 @@ export const createResources = (
   } else if (!dryRun) {
     // Do not run serverless call during the dry run.
     requests.push(
-      createKnativeService(name, projectName, formData.serverless.scaling, isiName, tag),
+      createKnativeService(
+        name,
+        projectName,
+        formData.serverless.scaling,
+        targetPort,
+        isiName,
+        tag,
+      ),
     );
   }
 
