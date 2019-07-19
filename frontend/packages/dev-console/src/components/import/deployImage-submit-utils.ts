@@ -266,7 +266,7 @@ export const createResources = (
   dryRun: boolean = false,
 ): Promise<K8sResourceKind[]> => {
   const {
-    route: { create: canCreateRoute, targetPort },
+    route: { create: canCreateRoute },
     project: { name: projectName },
     name,
     isi: { name: isiName, tag, ports },
@@ -291,7 +291,7 @@ export const createResources = (
         name,
         projectName,
         formData.serverless.scaling,
-        targetPort,
+        formData.route,
         isiName,
         tag,
       ),
