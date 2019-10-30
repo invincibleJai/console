@@ -6,3 +6,5 @@ export const FLAG_KNATIVE_SERVING_SERVICE = 'KNATIVE_SERVING_SERVICE';
 export const FLAG_EVENT_SOURCE_CRONJOB = 'EVENT_SOURCE_CRONJOB';
 export const FLAG_EVENT_SOURCE_CONTAINER = 'EVENT_SOURCE_CONTAINER';
 export const KNATIVE_SERVING_LABEL = 'serving.knative.dev/service';
+export const KNATIVE_SERVING_APIGROUP = 'serving.knative.dev';
+export const KNATIVE_EVENT_SOURCE_APIGROUP = 'sources.eventing.knative.dev';
