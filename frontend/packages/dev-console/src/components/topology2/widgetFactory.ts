@@ -34,6 +34,7 @@ import {
   TYPE_KNATIVE_SERVICE,
   TYPE_REVISION_TRAFFIC,
   TYPE_SERVICE_BINDING,
+  TYPE_KNATIVE_REVISION,
 } from './consts';
 import KnativeServiceWidget from './widgets/KnativeServiceWidget';
 import TrafficLinkWidget from './widgets/TrafficLinkWidget';
@@ -96,6 +97,25 @@ const widgetFactory: WidgetFactory = (
                 workloadContextMenu,
                 document.getElementById('modal-container'),
                 'odc2-topology-context-menu',
+              )(WorkloadNodeWidget),
+            ),
+          ),
+        ),
+      );
+    case TYPE_KNATIVE_REVISION:
+      return withCreateConnector(createConnectorCallback)(
+        withDndDrop<
+          any,
+          any,
+          { droppable?: boolean; hover?: boolean; canDrop?: boolean },
+          NodeEntityProps
+        >(nodeDropTargetSpec)(
+          withDragNode(nodeDragSourceSpec(type))(
+            withSelection(false, true)(
+              withContextMenu(
+                workloadContextMenu,
+                document.getElementById('modal-container'),
+                'odc-topology-context-menu',
               )(WorkloadNodeWidget),
             ),
           ),
