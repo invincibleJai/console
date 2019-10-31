@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { ResourceSummary, Kebab, LoadingBox } from '@console/internal/components/utils';
-import * as _ from 'lodash';
-import { getKsResourceModel } from '../../utils/get-knative-resources';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
-import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import { OverviewItem } from '@console/shared';
 import { K8sKind } from '@console/internal/module/k8s';
+import { getKsResourceModel } from '../../utils/get-knative-resources';
+import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 
 export type KnativeResourceOverviewPageProps = {
   item?: OverviewItem;

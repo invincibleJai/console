@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { connect } from 'react-redux';
+import { RootState } from '@console/internal/redux';
 import {
   KNATIVE_SERVING_LABEL,
   KNATIVE_EVENT_SOURCE_APIGROUP,
   KNATIVE_SERVING_APIGROUP,
 } from '../const';
-import { connect } from 'react-redux';
-import { RootState } from '@console/internal/redux';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
