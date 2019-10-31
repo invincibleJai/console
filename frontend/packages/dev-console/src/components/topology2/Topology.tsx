@@ -20,7 +20,8 @@ import TopologyResourcePanel from '../topology/TopologyResourcePanel';
 import TopologyApplicationPanel from '../topology/TopologyApplicationPanel';
 import { topologyModelFromDataModel } from './topology-utils';
 import layoutFactory from './layoutFactory';
-import WidgetFactory from './WidgetFactory';
+import WidgetFactory from './widgetFactory';
+import { TYPE_APPLICATION_GROUP } from './consts';
 
 export interface TopologyProps {
   data: TopologyDataModel;
@@ -128,7 +129,7 @@ const Topology: React.FC<TopologyProps> = ({ data, serviceBinding }) => {
   const selectedItemDetails = () => {
     const selectedEntity = selectedIds[0] ? visRef.current.getEntityById(selectedIds[0]) : null;
     if (isNodeEntity(selectedEntity)) {
-      if (selectedEntity.isGroup()) {
+      if (selectedEntity.getType() === TYPE_APPLICATION_GROUP) {
         return (
           <TopologyApplicationPanel
             application={{

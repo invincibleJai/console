@@ -88,33 +88,33 @@ class WidgetFactory {
           );
         case TYPE_EVENT_SOURCE:
           return withDragNode(nodeDragSourceSpec(type))(
-            // withSelection(false, true)(
-            withContextMenu(
-              workloadContextMenu,
-              document.getElementById('modal-container'),
-              'odc-topology-context-menu',
-            )(EventSourceWidget),
-            // ),
+            withSelection(false, true)(
+              withContextMenu(
+                workloadContextMenu,
+                document.getElementById('modal-container'),
+                'odc-topology-context-menu',
+              )(EventSourceWidget),
+            ),
           );
         case TYPE_KNATIVE_REVISION:
-            return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
-              withDndDrop<
-                any,
-                any,
-                { droppable?: boolean; hover?: boolean; canDrop?: boolean },
-                NodeEntityProps
-              >(nodeDropTargetSpec)(
-                withDragNode(nodeDragSourceSpec(type))(
-                  withSelection(false, true)(
-                    withContextMenu(
-                      workloadContextMenu,
-                      document.getElementById('modal-container'),
-                      'odc-topology-context-menu',
-                    )(RevisionWidget),
-                  ),
+          return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
+            withDndDrop<
+              any,
+              any,
+              { droppable?: boolean; hover?: boolean; canDrop?: boolean },
+              NodeEntityProps
+            >(nodeDropTargetSpec)(
+              withDragNode(nodeDragSourceSpec(type))(
+                withSelection(false, true)(
+                  withContextMenu(
+                    workloadContextMenu,
+                    document.getElementById('modal-container'),
+                    'odc-topology-context-menu',
+                  )(RevisionWidget),
                 ),
               ),
-            );
+            ),
+          );
         case TYPE_REVISION_TRAFFIC:
           return TrafficLinkWidget;
         case TYPE_WORKLOAD:
