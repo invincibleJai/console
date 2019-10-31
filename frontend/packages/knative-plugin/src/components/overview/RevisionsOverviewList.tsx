@@ -37,8 +37,6 @@ const RevisionsOverviewListItem: React.FC<RevisionsOverviewListItemProps> = ({
         </div>
         <span className="col-lg-4 col-md-4 col-sm-4 text-right">{getTraffic(name)}</span>
       </div>
-      {/* {traffic && traffic.percent && ( */}
-      {/* )} */}
     </li>
   );
 };
