@@ -289,12 +289,11 @@ export const transformTopologyData = (
   };
 
   /**
-   * START: Below code is just to test utils, needs to be uncommented to test and add import
-   * import { tranformKnNodeData } from '@console/knative-plugin/src/utils/knative-topology-utils';
+   * form data model specific to knative resources
    */
   const getKnativeTopologyData = (knativeResources, type: string) => {
     if (knativeResources && knativeResources.length) {
-      const resData = tranformKnNodeData(
+      const knativeResourceData = tranformKnNodeData(
         knativeResources,
         type,
         topologyGraphAndNodeData,
@@ -310,19 +309,20 @@ export const transformTopologyData = (
       } = topologyGraphAndNodeData;
       topologyGraphAndNodeData = {
         graph: {
-          nodes: [...nodes, ...resData.nodesData],
-          edges: [...edges, ...resData.edgesData],
-          groups: [...resData.groupsData],
+          nodes: [...nodes, ...knativeResourceData.nodesData],
+          edges: [...edges, ...knativeResourceData.edgesData],
+          groups: [...knativeResourceData.groupsData],
         },
-        topology: { ...topology, ...resData.dataToShowOnNodes },
+        topology: { ...topology, ...knativeResourceData.dataToShowOnNodes },
       };
     }
   };
 
   const getKnativeEventSources = (): K8sResourceKind[] => {
-    const allEventSourcesResources = _.merge(
-      resources.eventSourceCronjob && resources.eventSourceCronjob.data,
-      resources.eventSourceContainers && resources.eventSourceContainers.data,
+    const allEventSourcesResources = _.concat(
+      _.get(resources, 'eventSourceCronjob.data', []),
+      _.get(resources, 'eventSourceContainers.data', []),
+      _.get(resources, 'eventSourceApiserver.data', []),
     );
     return allEventSourcesResources;
   };
@@ -335,7 +335,6 @@ export const transformTopologyData = (
   knRevResources.length && getKnativeTopologyData(knRevResources, 'knative-revision');
   const deploymentResources = _.get(resources, ['deployments', 'data'], []);
   resources.deployments.data = filterNonKnativeDeployments(deploymentResources);
-
   // END: kn call to form topology data
 
   const transformResourceData = createInstanceForResource(resources, utils);

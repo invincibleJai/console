@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { NodeEntity } from '@console/topology/src/types';
 import widget from '@console/topology/src/widget';
 import useHover from '@console/topology/src/utils/useHover';
@@ -32,6 +33,16 @@ const EventSourceWidget: React.FC<EventSourceWidgetProps> = ({
   const { width, height } = entity.getBounds();
   const size = Math.min(width, height);
   const { data } = entity.getData();
+  const getImageIcon = () => {
+    switch (data.kind) {
+      case 'CronJobSource':
+        return 'icon-cronjobsource';
+      case 'ApiServerSource':
+        return 'icon-apiserversource';
+      default:
+        return 'icon-openshift';
+    }
+  };
 
   return (
     <g onClick={onSelect} onContextMenu={onContextMenu} ref={groupRefs}>
@@ -58,8 +69,7 @@ const EventSourceWidget: React.FC<EventSourceWidgetProps> = ({
         y={height * 0.25}
         width={size * 0.5}
         height={size * 0.5}
-        // TODO replace with icon based on data
-        xlinkHref="static/assets/openshift.svg"
+        xlinkHref={getImageForIconClass(getImageIcon())}
       />
       {(data.kind || entity.getLabel()) && (
         <SvgBoxedText
