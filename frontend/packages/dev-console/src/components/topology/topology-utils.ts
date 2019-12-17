@@ -13,6 +13,7 @@ import {
   tranformKnNodeData,
   filterNonKnativeDeployments,
   filterRevisionsByActiveApplication,
+  createKnativeEventSourceSink,
   NodeType,
 } from '@console/knative-plugin/src/utils/knative-topology-utils';
 import {
@@ -534,6 +535,10 @@ export const createTopologyResourceConnection = (
 
   if (serviceBindingFlag && target.operatorBackedService) {
     return createServiceBinding(sourceObj, targetObj);
+  }
+  // event sources
+  if (source && source.type === 'event-source' && target && target.type === 'knative-service') {
+    return createKnativeEventSourceSink(sourceObj, targetObj);
   }
 
   return createResourceConnection(sourceObj, targetObj, replaceTargetObj);

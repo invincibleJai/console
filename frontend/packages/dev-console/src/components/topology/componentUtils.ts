@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import {
   Modifiers,
   Edge,
@@ -54,6 +55,41 @@ const canDropEdgeOnNode = (operation: string, edge: Edge, node: Node): boolean =
 };
 
 const highlightNode = (monitor: DropTargetMonitor, props: NodeProps): boolean => {
+  if (
+    _.get(props, 'element.type') === 'knative-service' ||
+    (monitor.getItem() && monitor.getItem().type === 'event-source')
+  ) {
+    return false;
+  }
+  if (!monitor.isDragging() || !highlightNodeOperations.includes(monitor.getOperation())) {
+    return false;
+  }
+
+  if (monitor.getOperation() === CREATE_CONNECTOR_OPERATION) {
+    return (
+      monitor.getItem() !== props.element &&
+      !monitor
+        .getItem()
+        .getSourceEdges()
+        .find((e) => e.getTarget() === props.element)
+    );
+  }
+
+  return canDropEdgeOnNode(monitor.getOperation(), monitor.getItem(), props.element);
+};
+
+const highlightKnativeSvc = (monitor: DropTargetMonitor, props: NodeProps): boolean => {
+  if (
+    monitor.getItem() &&
+    monitor.getItem().type === 'event-source' &&
+    _.get(props, 'element.type') !== 'knative-service'
+  ) {
+    return false;
+  }
+
+  if (monitor.getItem() && monitor.getItem().type !== 'event-source') {
+    return false;
+  }
   if (!monitor.isDragging() || !highlightNodeOperations.includes(monitor.getOperation())) {
     return false;
   }
@@ -155,7 +191,7 @@ const graphWorkloadDropTargetSpec: DropTargetSpec<
   }),
 };
 
-const groupWorkoadDropTargetSpec: DropTargetSpec<
+const groupWorkloadDropTargetSpec: DropTargetSpec<
   any,
   any,
   { droppable: boolean; dropTarget: boolean; canDrop: boolean },
@@ -167,6 +203,30 @@ const groupWorkoadDropTargetSpec: DropTargetSpec<
     droppable: monitor.isDragging() && monitor.getOperation() === REGROUP_OPERATION,
     dropTarget: monitor.isOver(),
     canDrop: monitor.canDrop(),
+  }),
+};
+
+const graphEventSourceDropTargetSpec: DropTargetSpec<
+  GraphElement,
+  any,
+  { droppable: boolean; canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
+  NodeProps
+> = {
+  accept: [CREATE_CONNECTOR_DROP_TYPE],
+  canDrop: (item, monitor, props) => {
+    if (isEdge(item)) {
+      return item.getSource() !== props.element && item.getTarget() !== props.element;
+    }
+    if (item === props.element) {
+      return false;
+    }
+    return !props.element.getTargetEdges().find((e) => e.getSource() === item);
+  },
+  collect: (monitor, props) => ({
+    droppable: monitor.isDragging(),
+    canDrop: highlightKnativeSvc(monitor, props),
+    dropTarget: monitor.isOver(),
+    edgeDragging: nodesEdgeIsDragging(monitor, props),
   }),
 };
 
@@ -215,7 +275,8 @@ export {
   nodeDragSourceSpec,
   nodeDropTargetSpec,
   graphWorkloadDropTargetSpec,
-  groupWorkoadDropTargetSpec,
+  groupWorkloadDropTargetSpec,
+  graphEventSourceDropTargetSpec,
   edgeDragSourceSpec,
   createConnectorCallback,
   removeConnectorCallback,

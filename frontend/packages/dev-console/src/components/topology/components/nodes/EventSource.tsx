@@ -19,6 +19,8 @@ import './EventSource.scss';
 export type EventSourceProps = {
   element: Node;
   dragging?: boolean;
+  onHideCreateConnector;
+  onShowCreateConnector;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithContextMenuProps;
@@ -31,6 +33,8 @@ const EventSource: React.FC<EventSourceProps> = ({
   contextMenuOpen,
   dragNodeRef,
   dragging,
+  onHideCreateConnector,
+  onShowCreateConnector,
 }) => {
   const svgAnchorRef = useSvgAnchor();
   const [hover, hoverRef] = useHover();
@@ -38,6 +42,15 @@ const EventSource: React.FC<EventSourceProps> = ({
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
   const { data } = element.getData();
+
+  React.useLayoutEffect(() => {
+    const ele = element.getData();
+    if (hover && !ele.resources.obj.spec.sink) {
+      onShowCreateConnector && onShowCreateConnector();
+    } else {
+      onHideCreateConnector && onHideCreateConnector();
+    }
+  }, [hover, onShowCreateConnector, onHideCreateConnector, element]);
 
   return (
     <g

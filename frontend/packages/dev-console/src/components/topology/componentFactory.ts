@@ -24,8 +24,9 @@ import {
   graphWorkloadDropTargetSpec,
   nodeDragSourceSpec,
   nodeDropTargetSpec,
-  groupWorkoadDropTargetSpec,
+  groupWorkloadDropTargetSpec,
   edgeDragSourceSpec,
+  graphEventSourceDropTargetSpec,
   createConnectorCallback,
   removeConnectorCallback,
 } from './componentUtils';
@@ -66,7 +67,7 @@ class ComponentFactory {
     return (kind, type): ComponentType<{ element: GraphElement }> | undefined => {
       switch (type) {
         case TYPE_APPLICATION_GROUP:
-          return withDndDrop(groupWorkoadDropTargetSpec)(
+          return withDndDrop(groupWorkloadDropTargetSpec)(
             withSelection(false, true)(
               withContextMenu(
                 groupContextMenu,
@@ -76,21 +77,32 @@ class ComponentFactory {
             ),
           );
         case TYPE_KNATIVE_SERVICE:
-          return withSelection(false, true)(
-            withContextMenu(
-              nodeContextMenu,
-              document.getElementById('modal-container'),
-              'odc-topology-context-menu',
-            )(KnativeService),
+          return withDndDrop<
+            any,
+            any,
+            { droppable?: boolean; hover?: boolean; canDrop?: boolean },
+            NodeProps
+          >(graphEventSourceDropTargetSpec)(
+            withDragNode(nodeDragSourceSpec(type))(
+              withSelection(false, true)(
+                withContextMenu(
+                  nodeContextMenu,
+                  document.getElementById('modal-container'),
+                  'odc-topology-context-menu',
+                )(KnativeService),
+              ),
+            ),
           );
         case TYPE_EVENT_SOURCE:
-          return withDragNode(nodeDragSourceSpec(type))(
-            withSelection(false, true)(
-              withContextMenu(
-                nodeContextMenu,
-                document.getElementById('modal-container'),
-                'odc-topology-context-menu',
-              )(EventSource),
+          return withCreateConnector(createConnectorCallback(this.hasServiceBinding))(
+            withDragNode(nodeDragSourceSpec(type))(
+              withSelection(false, true)(
+                withContextMenu(
+                  nodeContextMenu,
+                  document.getElementById('modal-container'),
+                  'odc-topology-context-menu',
+                )(EventSource),
+              ),
             ),
           );
         case TYPE_KNATIVE_REVISION:

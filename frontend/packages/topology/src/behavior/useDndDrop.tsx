@@ -98,8 +98,11 @@ export const useDndDrop = <
             return false;
           }
           // perform a fast bounds check
-          const { left, right, top, bottom } = nodeRef.current.getBBox();
-          if (x < left || x > right || y < top || y > bottom) {
+          const bbox = nodeRef.current.getBBox();
+          if (
+            nodeRef.current instanceof SVGRectElement &&
+            (x < bbox.x || x > bbox.x + bbox.width || y < bbox.y || y > bbox.y + bbox.height)
+          ) {
             return false;
           }
 
