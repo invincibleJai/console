@@ -143,7 +143,9 @@ class ComponentFactory {
             ),
           );
         case TYPE_EVENT_SOURCE_LINK:
-          return EventSourceLink;
+          return withTargetDrag(edgeDragSourceSpec(this.hasServiceBinding))(
+            withRemoveConnector(removeConnectorCallback)(EventSourceLink),
+          );
         case TYPE_CONNECTS_TO:
           return withTargetDrag(edgeDragSourceSpec(this.hasServiceBinding))(
             withRemoveConnector(removeConnectorCallback)(ConnectsTo),

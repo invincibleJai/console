@@ -76,6 +76,7 @@ const ConnectorArrow: React.FC<ConnectorArrowProps> = ({
       className={classNames('topology-connector-arrow', className)}
     >
       <polygon points={pointsStringFromPoints(arrowPoints)} />
+      {/* <circle cx={0} cy={0} r={8} /> */}
       <polygon points={pointsStringFromPoints(boundingBox)} fillOpacity={0} strokeWidth={0} />
     </g>
   );

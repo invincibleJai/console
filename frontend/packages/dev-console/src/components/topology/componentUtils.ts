@@ -57,7 +57,7 @@ const canDropEdgeOnNode = (operation: string, edge: Edge, node: Node): boolean =
 const highlightNode = (monitor: DropTargetMonitor, props: NodeProps): boolean => {
   if (
     _.get(props, 'element.type') === 'knative-service' ||
-    (monitor.getItem() && monitor.getItem().type === 'event-source')
+    (monitor.getItem() && monitor.getItem().type === 'event-source-link')
   ) {
     return false;
   }
@@ -81,13 +81,13 @@ const highlightNode = (monitor: DropTargetMonitor, props: NodeProps): boolean =>
 const highlightKnativeSvc = (monitor: DropTargetMonitor, props: NodeProps): boolean => {
   if (
     monitor.getItem() &&
-    monitor.getItem().type === 'event-source' &&
+    monitor.getItem().type === 'event-source-link' &&
     _.get(props, 'element.type') !== 'knative-service'
   ) {
     return false;
   }
 
-  if (monitor.getItem() && monitor.getItem().type !== 'event-source') {
+  if (monitor.getItem() && monitor.getItem().type !== 'event-source-link') {
     return false;
   }
   if (!monitor.isDragging() || !highlightNodeOperations.includes(monitor.getOperation())) {
@@ -212,7 +212,7 @@ const graphEventSourceDropTargetSpec: DropTargetSpec<
   { droppable: boolean; canDrop: boolean; dropTarget: boolean; edgeDragging: boolean },
   NodeProps
 > = {
-  accept: [CREATE_CONNECTOR_DROP_TYPE],
+  accept: [CREATE_CONNECTOR_DROP_TYPE, MOVE_CONNECTOR_DROP_TYPE],
   canDrop: (item, monitor, props) => {
     if (isEdge(item)) {
       return item.getSource() !== props.element && item.getTarget() !== props.element;
