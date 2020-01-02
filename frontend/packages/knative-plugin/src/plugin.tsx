@@ -8,10 +8,12 @@ import {
   OverviewCRD,
   ResourceListPage,
   ResourceDetailsPage,
+  RoutePage,
   GlobalConfig,
   KebabActions,
   YAMLTemplate,
 } from '@console/plugin-sdk';
+import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
@@ -59,6 +61,7 @@ type ConsumedExtensions =
   | OverviewResourceTab
   | OverviewCRD
   | ResourceListPage
+  | RoutePage
   | KebabActions
   | YAMLTemplate
   | ResourceDetailsPage;
@@ -314,6 +317,25 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import(
           './components/routes/RouteDetailsPage' /* webpackChunkName: "knative-route-details-page" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/event-source'],
+      component: NamespaceRedirect,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/event-source/all-namespaces', '/event-source/ns/:ns'],
+      loader: async () =>
+        (await import(
+          './components/add/EventSourcePage' /* webpackChunkName: "dev-console-deployImage" */
         )).default,
     },
   },

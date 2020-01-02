@@ -154,6 +154,18 @@ const ODCEmptyState: React.FC<Props> = ({
               description="Browse the catalog to discover database services to add to your application"
             />
           </GalleryItem>
+          <GalleryItem key="gallery-eventsource">
+            <CatalogTile
+              className="odc-empty-state__tile"
+              onClick={(e: React.SyntheticEvent) =>
+                navigateTo(e, '/event-source?preselected-ns=${activeNamespace}')
+              }
+              href="/event-source?preselected-ns=${activeNamespace}"
+              title="Event Source"
+              iconClass="fas fa-database"
+              description="Create an event source and sink it to a service"
+            />
+          </GalleryItem>
         </Gallery>
       </div>
     </>
