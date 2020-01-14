@@ -7,6 +7,7 @@ import { menuActions, DaemonSetDetailsList } from '../daemon-set';
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
 import { ResourceOverviewDetails } from './resource-overview-details';
 import { OverviewItem } from '@console/shared';
+import MonitoringTab from '@console/dev-console/src/components/monitoring/overview/MonitoringTab';
 
 const DaemonSetOverviewDetails: React.SFC<DaemonSetOverviewDetailsProps> = ({ item }) => (
   <div className="overview__sidebar-pane-body resource-overview__body">
@@ -27,6 +28,10 @@ const tabs = [
   {
     name: 'Resources',
     component: OverviewDetailsResourcesTab,
+  },
+  {
+    name: 'Monitoring',
+    component: MonitoringTab,
   },
 ];
 
