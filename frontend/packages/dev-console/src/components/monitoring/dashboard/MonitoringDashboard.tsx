@@ -4,10 +4,10 @@ import { match as RMatch } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Grid, GridItem } from '@patternfly/react-core';
 import MonitoringDashboardGraph from './MonitoringDashboardGraph';
-import { queries } from './monitoringDashboardQueries';
+import { queries } from './MonitoringDashboardQueries';
 import MonitoringDasboardCountBlock from './MonitoringDashboardCountBlock';
 
-interface MonitoringDashboardProps {
+export interface MonitoringDashboardProps {
   match: RMatch<{
     ns?: string;
   }>;
@@ -25,8 +25,8 @@ const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ match }) => {
         <GridItem span={4} rowSpan={1}>
           <MonitoringDasboardCountBlock />
         </GridItem>
-        {_.map(queries, (q) => (
-          <GridItem span={4} key={q.title}>
+        {_.map(queries, (q, i) => (
+          <GridItem span={4} key={i}>
             <MonitoringDashboardGraph
               title={q.title}
               namespace={namespace}

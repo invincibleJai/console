@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Area } from '@console/internal/components/graphs/area';
 import { QueryBrowser } from '@console/internal/components/monitoring/query-browser';
-import { queries } from '../monitoringDashboardQueries';
+import { queries } from '../MonitoringDashboardQueries';
 import MonitoringDashboardGraph, { GraphTypes } from '../MonitoringDashboardGraph';
 
 describe('Monitoring Dashboard graph', () => {
