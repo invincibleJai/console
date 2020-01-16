@@ -1,0 +1,27 @@
+.odc-monitoring-alerts {
+  &__alerts-accordion {
+    padding: 0;
+    .pf-c-accordion {
+      &__toggle-text {
+        display: block;
+        width: 100%;
+      }
+    }
+
+    h5 {
+      margin: 0;
+    }
+    .pf-c-accordion__expanded-content.pf-m-expanded {
+      --pf-c-accordion__expanded-content--BorderLeftColor: transparent;
+    }
+    .pf-c-accordion__toggle.pf-m-expanded {
+      --pf-c-accordion__toggle--BorderLeftColor: transparent;
+    }
+    .pf-c-accordion__expanded-content-body {
+      padding: var(--pf-global--spacer--sm) 0;
+    }
+  }
+  &__timestamp {
+    margin-top: 5px;
+  }
+}

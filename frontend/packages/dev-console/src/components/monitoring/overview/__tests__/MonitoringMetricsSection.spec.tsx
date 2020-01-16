@@ -14,6 +14,7 @@ describe('Monitoring Metric Section', () => {
       status: {},
       kind: 'Deployment',
     },
+    pods: [],
   };
 
   it('should render Metric Section for workload of type Deployment', () => {

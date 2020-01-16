@@ -8,10 +8,11 @@ import {
   Grid,
   GridItem,
 } from '@patternfly/react-core';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { requirePrometheus } from '@console/internal/components/graphs';
-import MonitoringDashboardGraph from '../dashboard/MonitoringDashboardGraph';
 import { workloadMetricQueries } from './queries';
+import MonitoringDashboardGraph from '../dashboard/MonitoringDashboardGraph';
+import MonitoringOverviewSection from './MonitoringOverviewSection';
 import './MonitoringSection.scss';
 
 const WorkloadGraphs = requirePrometheus(({ resource }) => {
@@ -40,9 +41,10 @@ const WorkloadGraphs = requirePrometheus(({ resource }) => {
 
 type MonitoringMetricsSectionProps = {
   resource: K8sResourceKind;
+  pods: PodKind[];
 };
 
-const MonitoringMetricsSection: React.FC<MonitoringMetricsSectionProps> = ({ resource }) => {
+const MonitoringMetricsSection: React.FC<MonitoringMetricsSectionProps> = ({ resource, pods }) => {
   const [expanded, setExpanded] = React.useState();
 
   const onToggle = (id) => {
@@ -56,6 +58,7 @@ const MonitoringMetricsSection: React.FC<MonitoringMetricsSectionProps> = ({ res
   return (
     <>
       <div className="odc-monitoring-sections">
+        <MonitoringOverviewSection type="alerts" pods={pods} />
         <Accordion
           asDefinitionList={false}
           noBoxShadow
@@ -77,6 +80,7 @@ const MonitoringMetricsSection: React.FC<MonitoringMetricsSectionProps> = ({ res
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+        <MonitoringOverviewSection type="events" pods={pods} />
       </div>
     </>
   );

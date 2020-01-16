@@ -6,11 +6,10 @@ type MonitoringTabProps = {
   item: OverviewItem;
 };
 
-const MonitoringTab: React.FC<MonitoringTabProps> = ({ item }) => {
-  const { obj: res } = item;
+const MonitoringTab: React.FC<MonitoringTabProps> = ({ item: { obj: res, pods } }) => {
   return (
     <>
-      <MonitoringMetricsSection resource={res} />
+      <MonitoringMetricsSection resource={res} pods={pods} />
     </>
   );
 };
