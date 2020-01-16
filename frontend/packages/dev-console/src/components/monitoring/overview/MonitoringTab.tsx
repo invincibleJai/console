@@ -3,12 +3,11 @@ import { DeploymentKind } from '@console/internal/module/k8s';
 import { OverviewItem } from '@console/shared';
 import MonitoringMetricsSection from './MonitoringMetricsSection';
 
-const MonitoringTab: React.FC<MonitoringTabProps> = ({ item }) => {
-  const { obj: d } = item;
+const MonitoringTab: React.FC<MonitoringTabProps> = ({ item: { obj: d, pods } }) => {
   return (
-    <div className="overview__sidebar-pane-body">
+    <div>
       {(d.kind === 'Deployment' || d.kind === 'StatefulSet' || d.kind === 'DaemonSet') && (
-        <MonitoringMetricsSection deployment={d} />
+        <MonitoringMetricsSection deployment={d} pods={pods} />
       )}
     </div>
   );

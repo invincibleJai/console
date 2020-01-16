@@ -10,68 +10,68 @@ import { GraphTypes } from '../dashboard/MonitoringDashboardGraph';
 export const workloadMetricQueries = [
   {
     title: 'CPU Usage',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeCpuCores,
     byteDataType: ByteDataTypes.BinaryBytes,
     query: template(
       `sum(
           node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{cluster='', namespace='<%= ns %>'}
-          * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{cluster='', 
+          * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{cluster='',
           namespace='<%= ns %>', workload='<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
   {
     title: 'Memory Usage',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeBinaryBytes,
     byteDataType: ByteDataTypes.BinaryBytes,
     query: template(
-      `sum(container_memory_working_set_bytes{cluster='', namespace='<%= ns %>', container!=""} 
-          * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{cluster='', 
+      `sum(container_memory_working_set_bytes{cluster='', namespace='<%= ns %>', container!=""}
+          * on(namespace,pod) group_left(workload, workload_type) mixin_pod_workload{cluster='',
           namespace='<%= ns %>', workload='<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
   {
     title: 'Receive Bandwidth',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: template(
-      `sum(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= ns %>'}[4h]) 
-          * on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="", 
+      `sum(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= ns %>'}[4h])
+          * on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="",
           namespace=~'<%= ns %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
   {
     title: 'Transmit Bandwidth',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: template(
       `sum(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= ns %>'}[4h])
-         * on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="", 
+         * on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="",
          namespace=~'<%= ns %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
   {
     title: 'Average Container Bandwidth by Pod: Received',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: template(
-      `avg(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= ns %>'}[4h]) 
-        * on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="", 
+      `avg(irate(container_network_receive_bytes_total{cluster="", namespace=~'<%= ns %>'}[4h])
+        * on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="",
         namespace=~'<%= ns %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },
   {
     title: 'Average Container Bandwidth by Pod: Transmitted',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: template(
-      `avg(irate(container_network_transmit_bytes_total{cluster="", namespace=~'<%= ns %>'}[4h]) 
-        * on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="", 
+      `avg(irate(container_network_transmit_bytes_total{cluster="", namespace=~'<%= ns %>'}[4h])
+        * on (namespace,pod) group_left(workload,workload_type) mixin_pod_workload{cluster="",
         namespace=~'<%= ns %>', workload=~'<%= workloadName %>', workload_type='<%= workloadType %>'}) by (pod)`,
     ),
   },

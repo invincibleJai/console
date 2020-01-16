@@ -17,6 +17,7 @@ describe('Monitoring Metric Section', () => {
         status: {},
         kind: 'Deployment',
       },
+      pods: [],
     };
     const component = shallow(<MonitoringMetricsSection {...metSecProps} />);
     expect(component.find(SidebarSectionHeading).exists()).toBe(true);

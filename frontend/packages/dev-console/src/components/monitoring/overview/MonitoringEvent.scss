@@ -1,0 +1,20 @@
+.odc-monitoring-event {
+  &__event-accordion {
+    padding: 0;
+  }
+  &__alert-accordion {
+    padding: 0;
+    .pf-c-accordion {
+      &__toggle-text {
+      display: block;
+      width: 100%;
+      }
+    }
+  }
+  &__timestamp {
+    margin-top: 5px;
+  }
+  h5 {
+    margin: 0;
+  }
+}
