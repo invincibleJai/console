@@ -10,7 +10,7 @@ import { GraphTypes } from '../dashboard/MonitoringDashboardGraph';
 export const workloadMetricQueries = [
   {
     title: 'CPU Usage',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeCpuCores,
     byteDataType: ByteDataTypes.BinaryBytes,
     query: template(
@@ -22,7 +22,7 @@ export const workloadMetricQueries = [
   },
   {
     title: 'Memory Usage',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeBinaryBytes,
     byteDataType: ByteDataTypes.BinaryBytes,
     query: template(
@@ -33,7 +33,7 @@ export const workloadMetricQueries = [
   },
   {
     title: 'Receive Bandwidth',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: template(
@@ -44,7 +44,7 @@ export const workloadMetricQueries = [
   },
   {
     title: 'Transmit Bandwidth',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: template(
@@ -55,7 +55,7 @@ export const workloadMetricQueries = [
   },
   {
     title: 'Average Container Bandwidth by Pod: Received',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: template(
@@ -66,7 +66,7 @@ export const workloadMetricQueries = [
   },
   {
     title: 'Average Container Bandwidth by Pod: Transmitted',
-    chartType: GraphTypes.LINE,
+    chartType: GraphTypes.line,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
     query: template(

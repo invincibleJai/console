@@ -7,10 +7,10 @@ import { requirePrometheus } from '@console/internal/components/graphs';
 import MonitoringDashboardGraph from '../dashboard/MonitoringDashboardGraph';
 import { workloadMetricQueries } from './queries';
 
-const WorkloadGraphs = requirePrometheus(({ deployment }) => {
-  const ns = deployment.metadata.namespace;
-  const workloadName = deployment.metadata.name;
-  const workloadType = deployment.kind.toLowerCase();
+const WorkloadGraphs = requirePrometheus(({ resource }) => {
+  const ns = resource.metadata.namespace;
+  const workloadName = resource.metadata.name;
+  const workloadType = resource.kind.toLowerCase();
   return (
     <>
       <Grid className="co-m-pane__body">
@@ -31,17 +31,17 @@ const WorkloadGraphs = requirePrometheus(({ deployment }) => {
   );
 });
 
-const MonitoringMetricsSection: React.FC<MonitoringMetricsSectionProps> = ({ deployment }) => {
+type MonitoringMetricsSectionProps = {
+  resource: K8sResourceKind;
+};
+
+const MonitoringMetricsSection: React.FC<MonitoringMetricsSectionProps> = ({ resource }) => {
   return (
     <>
       <SidebarSectionHeading text="Metrics" />
-      <WorkloadGraphs deployment={deployment} />
+      <WorkloadGraphs resource={resource} />
     </>
   );
-};
-
-type MonitoringMetricsSectionProps = {
-  deployment: K8sResourceKind;
 };
 
 export default MonitoringMetricsSection;
