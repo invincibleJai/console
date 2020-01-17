@@ -37,6 +37,7 @@ import {
   newClusterTaskTemplate,
 } from './templates';
 import reducer from './utils/reducer';
+import { isMonitoringWorkload } from './components/monitoring/monitoring-utils';
 
 const {
   ClusterTaskModel,
@@ -299,11 +300,12 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Overview/Resource',
     properties: {
-      name: 'Resources',
-      key: 'configurations',
+      name: 'Monitoring',
+      key: 'obj',
+      utils: isMonitoringWorkload,
       loader: () =>
         import(
-          './components/monitoring/overview/MonitoringTab' /* webpackChunkName: "knative-overview" */
+          './components/monitoring/overview/MonitoringTab' /* webpackChunkName: "monitoring-overview" */
         ).then((m) => m.default),
     },
   },

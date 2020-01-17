@@ -9,7 +9,6 @@ import { OverviewDetailsResourcesTab } from './resource-overview-page';
 import { ResourceOverviewDetails } from './resource-overview-details';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { OverviewItem } from '@console/shared';
-import MonitoringTab from '@console/dev-console/src/components/monitoring/overview/MonitoringTab';
 
 const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({
   item: { obj: d, pods: pods, current, previous, isRollingOut },
@@ -63,10 +62,6 @@ const tabs = [
   {
     name: 'Resources',
     component: OverviewDetailsResourcesTab,
-  },
-  {
-    name: 'Monitoring',
-    component: MonitoringTab,
   },
 ];
 
