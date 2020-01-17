@@ -8,7 +8,7 @@ describe('Monitoring Metric Section', () => {
 
   it('should render Metric Section for workload of type Deployment', () => {
     metSecProps = {
-      deployment: {
+      resource: {
         metadata: {
           name: 'workload-name',
           namespace: 'test',

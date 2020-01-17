@@ -28,6 +28,9 @@ namespace ExtensionProperties {
     /** Name of key to be checked in prop items. */
     key: string;
 
+    /** util to check if any tabs from plugins need to be added. */
+    utils?: (obj: K8sResourceKind) => boolean;
+
     /** Loader for the corresponding tab component. */
     loader: LazyLoader<OverviewDetailsResourcesTabProps>;
   }
