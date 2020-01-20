@@ -1,11 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Grid, GridItem } from '@patternfly/react-core';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionToggle,
+  AccordionContent,
+  Grid,
+  GridItem,
+} from '@patternfly/react-core';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { SidebarSectionHeading } from '@console/internal/components/utils';
 import { requirePrometheus } from '@console/internal/components/graphs';
 import MonitoringDashboardGraph from '../dashboard/MonitoringDashboardGraph';
 import { workloadMetricQueries } from './queries';
+import './MonitoringSection.scss';
 
 const WorkloadGraphs = requirePrometheus(({ resource }) => {
   const ns = resource.metadata.namespace;
@@ -36,10 +43,41 @@ type MonitoringMetricsSectionProps = {
 };
 
 const MonitoringMetricsSection: React.FC<MonitoringMetricsSectionProps> = ({ resource }) => {
+  const [expanded, setExpanded] = React.useState();
+
+  const onToggle = (id) => {
+    if (id === expanded) {
+      setExpanded('');
+    } else {
+      setExpanded(id);
+    }
+  };
+
   return (
     <>
-      <SidebarSectionHeading text="Metrics" />
-      <WorkloadGraphs resource={resource} />
+      <div className="odc-monitoring-sections">
+        <Accordion
+          asDefinitionList={false}
+          noBoxShadow
+          className="odc-monitoring-sections__metric-accordion"
+          headingLevel="h5"
+        >
+          <AccordionItem>
+            <AccordionToggle
+              onClick={() => {
+                onToggle('metrics');
+              }}
+              isExpanded={expanded === 'metrics'}
+              id="metrics"
+            >
+              Metrics
+            </AccordionToggle>
+            <AccordionContent id="metrics" isHidden={expanded !== 'metrics'}>
+              <WorkloadGraphs resource={resource} />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
     </>
   );
 };

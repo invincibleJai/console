@@ -9,9 +9,9 @@ type MonitoringTabProps = {
 const MonitoringTab: React.FC<MonitoringTabProps> = ({ item }) => {
   const { obj: res } = item;
   return (
-    <div className="overview__sidebar-pane-body">
+    <>
       <MonitoringMetricsSection resource={res} />
-    </div>
+    </>
   );
 };
 
