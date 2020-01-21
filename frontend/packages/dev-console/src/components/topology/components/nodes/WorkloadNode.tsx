@@ -11,7 +11,7 @@ import {
 } from '@console/topology';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { routeDecoratorIcon } from '../../../import/render-utils';
+import { routeDecoratorIcon, getMonitoringDecoratorIcon } from '../../../import/render-utils';
 import Decorator from './Decorator';
 import PodSet from './PodSet';
 import KnativeIcon from './KnativeIcon';
@@ -43,11 +43,12 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
   const { width, height } = element.getBounds();
   const workloadData = element.getData().data;
   const size = Math.min(width, height);
-  const { donutStatus, editUrl, cheEnabled } = workloadData;
+  const { donutStatus, editUrl, cheEnabled, monitoringStatus } = workloadData;
   const { radius, decoratorRadius } = calculateRadius(size);
   const cx = width / 2;
   const cy = height / 2;
   const repoIcon = routeDecoratorIcon(editUrl, decoratorRadius, cheEnabled);
+  const monitoringDecoratorIcon = getMonitoringDecoratorIcon(monitoringStatus, decoratorRadius);
   const tipContent = `Create a ${
     element.getData().operatorBackedService ? 'binding' : 'visual'
   } connector`;
@@ -92,6 +93,26 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = ({
                 >
                   <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
                     <ExternalLinkAltIcon style={{ fontSize: decoratorRadius }} alt="Open URL" />
+                  </g>
+                </Decorator>
+              </Tooltip>
+            ),
+            monitoringDecoratorIcon && (
+              <Tooltip key="monitoring" content="Monitoring" position={TooltipPosition.left}>
+                <Decorator
+                  x={cx + -radius + decoratorRadius * 0.7}
+                  y={cy + -radius + decoratorRadius * 0.7}
+                  radius={decoratorRadius}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    element
+                      .getGraph()
+                      .getController()
+                      .fireEvent('selection', [element.getId()]);
+                  }}
+                >
+                  <g transform={`translate(-${decoratorRadius / 2}, -${decoratorRadius / 2})`}>
+                    {monitoringDecoratorIcon}
                   </g>
                 </Decorator>
               </Tooltip>
