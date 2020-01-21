@@ -1,5 +1,16 @@
 import * as React from 'react';
-import { BitbucketIcon, GitAltIcon, GithubIcon, GitlabIcon } from '@patternfly/react-icons';
+import {
+  BitbucketIcon,
+  GitAltIcon,
+  GithubIcon,
+  GitlabIcon,
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+} from '@patternfly/react-icons';
+import {
+  global_danger_color_100 as dangerColor,
+  global_success_color_200 as okColor,
+} from '@patternfly/react-tokens';
 import CheIcon from '../topology/components/nodes/CheIcon';
 import { detectGitType } from './import-validation-utils';
 import { GitTypes } from './import-types';
@@ -24,5 +35,24 @@ export const routeDecoratorIcon = (
       return <GitlabIcon style={{ fontSize: radius }} alt="Edit Source Code" />;
     default:
       return <GitAltIcon style={{ fontSize: radius }} alt="Edit Source Code" />;
+  }
+};
+
+export const getMonitoringDecoratorIcon = (status: string, radius: number): React.ReactElement => {
+  switch (status) {
+    case 'Normal':
+      return (
+        <CheckCircleIcon color={okColor.value} style={{ fontSize: radius }} alt="Monitoring" />
+      );
+    case 'Warning':
+      return (
+        <ExclamationCircleIcon
+          color={dangerColor.value}
+          style={{ fontSize: radius }}
+          alt="Monitoring"
+        />
+      );
+    default:
+      return null;
   }
 };
