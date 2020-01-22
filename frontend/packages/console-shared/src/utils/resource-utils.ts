@@ -108,6 +108,12 @@ export const getResourceList = (namespace: string, resList?: any) => {
       namespace,
       prop: 'statefulSets',
     },
+    {
+      isList: true,
+      kind: 'Event',
+      namespace,
+      prop: 'events',
+    },
   ];
 
   let utils = [];
@@ -588,6 +594,16 @@ export class TransformResourceData {
     });
   };
 
+  public getEventsForPods = (pods) => {
+    const { events } = this.resources;
+    const kind = 'Pod';
+    const podNameList = _.map(pods, 'metadata.name');
+    const podEvents = _.filter(events.data, (event) => {
+      return event.involvedObject.kind === kind && podNameList.includes(event.involvedObject.name);
+    });
+    return podEvents;
+  };
+
   public getServicesForResource = (resource: K8sResourceKind): K8sResourceKind[] => {
     const { services } = this.resources;
     const template: PodTemplate = this.getPodTemplate(resource);
@@ -620,6 +636,8 @@ export class TransformResourceData {
         ...rolloutAlerts,
       };
       const status = resourceStatus(obj, current, isRollingOut);
+      const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
+      const events = this.getEventsForPods(pods);
       const overviewItems = {
         alerts,
         buildConfigs,
@@ -627,10 +645,11 @@ export class TransformResourceData {
         isRollingOut,
         obj,
         previous,
-        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+        pods,
         routes,
         services,
         status,
+        events,
       };
 
       if (this.utils) {
@@ -662,6 +681,8 @@ export class TransformResourceData {
         ...getBuildAlerts(buildConfigs),
       };
       const status = resourceStatus(obj, current, isRollingOut);
+      const pods = [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])];
+      const events = this.getEventsForPods(pods);
       const overviewItems = {
         alerts,
         buildConfigs,
@@ -669,10 +690,11 @@ export class TransformResourceData {
         isRollingOut,
         obj,
         previous,
-        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
+        pods,
         routes,
         services,
         status,
+        events,
       };
 
       if (this.utils) {
@@ -700,6 +722,7 @@ export class TransformResourceData {
         ...getBuildAlerts(buildConfigs),
       };
       const status = resourceStatus(obj);
+      const events = this.getEventsForPods(pods);
       return {
         alerts,
         buildConfigs,
@@ -708,6 +731,7 @@ export class TransformResourceData {
         routes,
         services,
         status,
+        events,
       };
     });
   };
@@ -728,6 +752,7 @@ export class TransformResourceData {
       const services = this.getServicesForResource(obj);
       const routes = this.getRoutesForServices(services);
       const status = resourceStatus(obj);
+      const events = this.getEventsForPods(pods);
 
       return {
         alerts,
@@ -737,6 +762,7 @@ export class TransformResourceData {
         routes,
         services,
         status,
+        events,
       };
     });
   };
