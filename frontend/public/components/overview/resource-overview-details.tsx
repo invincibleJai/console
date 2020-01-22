@@ -20,10 +20,11 @@ const getResourceTabComp = (t) => (props) => (
 );
 
 const getPluginTabResources = (item, tabs): ResourceOverviewDetailsProps['tabs'] => {
-  const tabEntries = plugins.registry.getOverviewResourceTabs();
-  const overrideTabs = tabEntries.filter((tab) => item[tab.properties.key]);
+  const tabEntry = plugins.registry
+    .getOverviewResourceTabs()
+    .filter((tab) => item[tab.properties.key]);
   const overridenTabs = tabs.map((tab) => {
-    const tabEntryConfig = overrideTabs.find((t) => tab.name === t.properties.name);
+    const tabEntryConfig = tabEntry.find((t) => tab.name === t.properties.name);
     if (tabEntryConfig) {
       return {
         name: tab.name,
@@ -32,16 +33,17 @@ const getPluginTabResources = (item, tabs): ResourceOverviewDetailsProps['tabs']
     }
     return tab;
   });
-  /** Append tabs from plugins if criteria satisfies */
-  const newTabs = tabEntries
-    .filter((tab) => tab.properties.utils && tab.properties.utils(item[tab.properties.key]))
-    .map((tabEntry) => {
+  /** Append new tabs from plugins */
+  const newTabs = tabEntry
+    .filter((entry) => {
+      return tabs.find((tab) => tab.name !== entry.properties.name);
+    })
+    .map((entry) => {
       return {
-        name: tabEntry.properties.name,
-        component: getResourceTabComp(tabEntry),
+        name: entry.properties.name,
+        component: getResourceTabComp(entry),
       };
     });
-
   return overridenTabs.concat(newTabs);
 };
 

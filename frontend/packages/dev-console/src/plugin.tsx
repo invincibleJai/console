@@ -22,13 +22,14 @@ import { NamespaceRedirect } from '@console/internal/components/utils/namespace-
 import { CodeIcon } from '@patternfly/react-icons';
 import { FLAGS } from '@console/shared/src/constants';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { EventModel } from '@console/internal/models';
 import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import {
   tknPipelineAndPipelineRunsResources,
   getPipelinesAndPipelineRunsForResource,
 } from './utils/pipeline-plugin-utils';
-import { FLAG_OPENSHIFT_PIPELINE, ALLOW_SERVICE_BINDING } from './const';
+import { FLAG_OPENSHIFT_PIPELINE, ALLOW_SERVICE_BINDING, FLAG_OPENSHIFT_MONITORING } from './const';
 import {
   newPipelineTemplate,
   newTaskTemplate,
@@ -37,7 +38,10 @@ import {
   newClusterTaskTemplate,
 } from './templates';
 import reducer from './utils/reducer';
-import { isMonitoringWorkload } from './components/monitoring/monitoring-utils';
+import {
+  monitoringEventResources,
+  getMonitoringEventResource,
+} from './components/monitoring/monitoring-utils';
 
 const {
   ClusterTaskModel,
@@ -84,6 +88,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.ServiceBindingRequestModel,
       flag: ALLOW_SERVICE_BINDING,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: EventModel,
+      flag: FLAG_OPENSHIFT_MONITORING,
     },
   },
   {
@@ -298,11 +309,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Overview/CRD',
+    properties: {
+      resources: monitoringEventResources,
+      required: FLAG_OPENSHIFT_MONITORING,
+      utils: getMonitoringEventResource,
+    },
+  },
+  {
     type: 'Overview/Resource',
     properties: {
       name: 'Monitoring',
-      key: 'obj',
-      utils: isMonitoringWorkload,
+      key: 'events',
       loader: () =>
         import(
           './components/monitoring/overview/MonitoringTab' /* webpackChunkName: "monitoring-overview" */
