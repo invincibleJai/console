@@ -130,17 +130,18 @@ const getMetadata = (formData: DeployImageFormData) => {
   return { labels, podLabels, volumes, volumeMounts };
 };
 
-export const createOrUpdateDeployment = (
+export const createOrUpdateDeployment = async (
   formData: DeployImageFormData,
   dryRun: boolean,
   originalDeployment?: K8sResourceKind,
   verb: K8sVerb = 'create',
+  appResources?: AppResources,
 ): Promise<K8sResourceKind> => {
   const {
     registry,
     project: { name: namespace },
     name,
-    isi: { image, ports },
+    isi: { image, ports, tag: imageStreamTag },
     deployment: { env, replicas },
     labels: userLabels,
     limits: { cpu, memory },
@@ -164,10 +165,22 @@ export const createOrUpdateDeployment = (
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
 
-  const imageRef =
-    registry === RegistryType.External
-      ? `${imgName || name}:${tag}`
-      : _.get(image, 'dockerImageReference');
+  // const imageRef =
+  //   registry === RegistryType.External
+  //     ? `${imgName || name}:${tag}`
+  //     : _.get(image, 'dockerImageReference');
+
+  let imageStreamRepo: string = _.get(image, 'dockerImageReference');
+  if (registry === RegistryType.External) {
+    const imageStreamResponse = await createOrUpdateImageStream(
+      formData,
+      dryRun,
+      _.get(appResources, 'imageStream.data'),
+      verb,
+    );
+    imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
+  }
+  const imageStreamUrl = imageStreamTag ? `${imageStreamRepo}:${imageStreamTag}` : imageStreamRepo;
 
   const newDeployment = {
     kind: 'Deployment',
@@ -195,7 +208,7 @@ export const createOrUpdateDeployment = (
           containers: [
             {
               name,
-              image: imageRef,
+              image: imageStreamUrl,
               ports,
               volumeMounts,
               env,
@@ -227,13 +240,15 @@ export const createOrUpdateDeployment = (
     : k8sCreate(DeploymentModel, deployment, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateDeploymentConfig = (
+export const createOrUpdateDeploymentConfig = async (
   formData: DeployImageFormData,
   dryRun: boolean,
   originalDeploymentConfig?: K8sResourceKind,
   verb: K8sVerb = 'create',
+  appResources?: AppResources,
 ): Promise<K8sResourceKind> => {
   const {
+    registry,
     project: { name: namespace },
     name,
     isi: { image, tag, ports },
@@ -244,6 +259,18 @@ export const createOrUpdateDeploymentConfig = (
   } = formData;
 
   const { labels, podLabels, volumes, volumeMounts } = getMetadata(formData);
+
+  let imageStreamRepo: string = _.get(image, ['dockerImageMetadata', 'Config', 'Image']);
+  if (registry === RegistryType.External) {
+    const imageStreamResponse = await createOrUpdateImageStream(
+      formData,
+      dryRun,
+      _.get(appResources, 'imageStream.data'),
+      verb,
+    );
+    imageStreamRepo = imageStreamResponse.status.dockerImageRepository;
+  }
+  const imageStreamUrl = tag ? `${imageStreamRepo}:${tag}` : imageStreamRepo;
 
   const newDeploymentConfig = {
     kind: 'DeploymentConfig',
@@ -267,7 +294,7 @@ export const createOrUpdateDeploymentConfig = (
           containers: [
             {
               name,
-              image: _.get(image, ['dockerImageMetadata', 'Config', 'Image']),
+              image: imageStreamUrl,
               ports,
               volumeMounts,
               env,
@@ -359,10 +386,10 @@ export const createOrUpdateDeployImageResources = async (
       requests.push(createSystemImagePullerRoleBinding(formData, dryRun));
   }
   if (formData.resources !== Resources.KnativeService) {
-    registry === RegistryType.External &&
-      requests.push(
-        createOrUpdateImageStream(formData, dryRun, _.get(appResources, 'imageStream.data'), verb),
-      );
+    // registry === RegistryType.External &&
+    //   requests.push(
+    //     createOrUpdateImageStream(formData, dryRun, _.get(appResources, 'imageStream.data'), verb),
+    //   );
     if (formData.resources === Resources.Kubernetes) {
       requests.push(
         createOrUpdateDeployment(
@@ -370,6 +397,7 @@ export const createOrUpdateDeployImageResources = async (
           dryRun,
           _.get(appResources, 'editAppResource.data'),
           verb,
+          appResources,
         ),
       );
     } else {
@@ -379,6 +407,7 @@ export const createOrUpdateDeployImageResources = async (
           dryRun,
           _.get(appResources, 'editAppResource.data'),
           verb,
+          appResources,
         ),
       );
     }
