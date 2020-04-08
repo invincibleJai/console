@@ -1,9 +1,8 @@
 export enum EventSources {
   CronJobSource = 'CronJobSource',
-  ContainerSource = 'ContainerSource',
   ApiServerSource = 'ApiServerSource',
   KafkaSource = 'KafkaSource',
-  CamelkSource = 'CamelSource',
+  CamelSource = 'CamelSource',
   SinkBinding = 'SinkBinding',
 }
 
@@ -32,8 +31,10 @@ export interface EventSourceFormData {
   application: ApplicationData;
   name: string;
   type: string;
+  apiVersion: string;
   sink: KnativeServiceName;
   data?: EventSourceData;
+  chartValuesYAML?: string;
 }
 
 export interface EventSourceList {

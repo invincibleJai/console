@@ -64,10 +64,27 @@ export const sourceDataSpecSchema = yup
     }),
   });
 
+const ownEvenstSources = Object.keys(EventSources);
 export const eventSourceValidationSchema = yup.object().shape({
-  project: projectNameValidationSchema,
-  application: applicationNameValidationSchema,
-  name: nameValidationSchema,
-  sink: sinkServiceSchema,
-  data: sourceDataSpecSchema,
+  project: yup.object().when('type', {
+    is: (type) => ownEvenstSources.includes(type),
+    then: projectNameValidationSchema,
+  }),
+  application: yup.object().when('type', {
+    is: (type) => ownEvenstSources.includes(type),
+    then: applicationNameValidationSchema,
+  }),
+  name: yup.string().when('type', {
+    is: (type) => ownEvenstSources.includes(type),
+    then: nameValidationSchema,
+  }),
+  sink: yup.object().when('type', {
+    is: (type) => ownEvenstSources.includes(type),
+    then: sinkServiceSchema,
+  }),
+  data: yup.object().when('type', {
+    is: (type) => ownEvenstSources.includes(type),
+    then: sourceDataSpecSchema,
+  }),
+  chartValuesYAML: yup.string(),
 });
