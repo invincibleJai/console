@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { safeDump } from 'js-yaml';
 import { FormikProps, FormikValues } from 'formik';
-import { FormFooter, YAMLEditorField } from '@console/shared';
+import { FormFooter } from '@console/shared';
 import { Form } from '@patternfly/react-core';
 import { K8sKind } from '@console/internal/module/k8s';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
@@ -71,21 +71,13 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   const updateRender = () => {
     switch (values.type) {
       case EventSources.CronJobSource:
-        return (
-          <>
-            <CronJobSection />
-            {appSinkSection()}
-          </>
-        );
+        return <CronJobSection />;
       case EventSources.SinkBinding:
-        return (
-          <>
-            <SinkBindingSection />
-            {appSinkSection()}
-          </>
-        );
+        return <SinkBindingSection />;
+      case EventSources.ApiServerSource:
+        return <ApiServerSection namespace={namespace} />;
       default:
-        return <YAMLEditorField name="chartValuesYAML" onSave={handleSubmit} minHeight="350px" />;
+        return null;
     }
   };
   return (
@@ -95,6 +87,7 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
         handleChange={handleChange}
       />
       {updateRender()}
+      {appSinkSection()}
       {JSON.stringify({ status, errors })}
       <FormFooter
         key={`${values.type}-form-footer`}

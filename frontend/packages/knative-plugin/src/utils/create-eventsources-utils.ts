@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import { K8sResourceKind, referenceForModel, K8sKind } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
+import { getActiveNamespace } from '@console/internal/actions/ui';
 import { getAppLabels } from '@console/dev-console/src/utils/resource-label-utils';
 import { annotations } from '@console/dev-console/src/utils/shared-submit-utils';
-// import { EventSources } from '../components/add/import-types';
 import {
   ServiceModel,
   EventSourceCronJobModel,
@@ -12,7 +12,6 @@ import {
   EventSourceCamelModel,
   EventSourceKafkaModel,
 } from '../models';
-// import { KNATIVE_EVENT_SOURCE_APIGROUP, KNATIVE_EVENT_SOURCE_APIGROUP_DEP } from '../const';
 import { getKnativeEventSourceIcon } from './get-knative-icon';
 
 export const getEventSourcesDepResource = (formData: any): K8sResourceKind => {
@@ -83,11 +82,11 @@ export const getEventSourceData = (source: string) => {
   return eventSourceData[source] ? eventSourceData[source] : {};
 };
 
-export const useKnativeEventingAccess = (model: K8sKind, namespace: string): boolean => {
+export const useKnativeEventingAccess = (model: K8sKind): boolean => {
   const canCreateEventSource = useAccessReview({
     group: model.apiGroup,
     resource: model.plural,
-    namespace,
+    namespace: getActiveNamespace(),
     verb: 'create',
   });
   return canCreateEventSource;

@@ -56,6 +56,7 @@ import {
   getEventSourceSinkBinding,
 } from './utils/get-knative-resources';
 import { getKebabActionsForKind } from './utils/kebab-actions';
+import { getSourcesModel } from './utils/fetch-dynamic-sources-utils';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -70,6 +71,7 @@ type ConsumedExtensions =
   | YAMLTemplate
   | ResourceDetailsPage;
 
+getSourcesModel();
 const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
