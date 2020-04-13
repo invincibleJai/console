@@ -7,6 +7,7 @@ import AppSection from '@console/dev-console/src/components/import/app/AppSectio
 import { FirehoseList } from '@console/dev-console/src/components/import/import-types';
 import { useEventSourceList } from '../../utils/create-eventsources-utils';
 import CronJobSection from './event-sources/CronJobSection';
+import PingSourceSection from './event-sources/PingSourceSection';
 import SinkBindingSection from './event-sources/SinkBindingSection';
 import ApiServerSection from './event-sources/ApiServerSection';
 import SinkSection from './event-sources/SinkSection';
@@ -35,6 +36,7 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   <Form className="co-deploy-image" onSubmit={handleSubmit}>
     <EventSourcesSelector eventSourceList={useEventSourceList(namespace)} />
     {values.type === EventSources.CronJobSource && <CronJobSection />}
+    {values.type === EventSources.PingSource && <PingSourceSection />}
     {values.type === EventSources.SinkBinding && <SinkBindingSection />}
     {values.type === EventSources.ApiServerSource && <ApiServerSection />}
     {values.type === EventSources.KafkaSource && <KafkaSourceSection />}

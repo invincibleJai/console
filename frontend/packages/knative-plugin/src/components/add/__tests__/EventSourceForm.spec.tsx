@@ -8,6 +8,7 @@ import SinkSection from '../event-sources/SinkSection';
 import { getDefaultEventingData } from '../../../utils/__tests__/knative-serving-data';
 import { EventSources } from '../import-types';
 import KafkaSourceSection from '../event-sources/KafkaSourceSection';
+import PingSourceSection from '../event-sources/PingSourceSection';
 import AdvancedSection from '../AdvancedSection';
 
 type EventSourceFormProps = React.ComponentProps<typeof EventSourceForm>;
@@ -89,5 +90,12 @@ describe('EventSource Form', () => {
     modFormProps.values.type = 'KafkaSource';
     const eventSourceForm = shallow(<EventSourceForm {...modFormProps} />);
     expect(eventSourceForm.find(AdvancedSection)).toHaveLength(1);
+  });
+
+  it('should render PingSource section when PingSource type is selected', () => {
+    const modFormProps = cloneDeep(formProps);
+    modFormProps.values.type = 'PingSource';
+    const eventSourceForm = shallow(<EventSourceForm {...modFormProps} />);
+    expect(eventSourceForm.find(PingSourceSection)).toHaveLength(1);
   });
 });

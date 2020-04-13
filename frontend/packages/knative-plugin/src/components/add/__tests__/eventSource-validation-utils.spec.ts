@@ -73,6 +73,7 @@ describe('Event Source ValidationUtils', () => {
       });
     });
   });
+
   describe('ContainerSource : Event Source Validation', () => {
     it('should not throw error when the form data has valid values', async () => {
       const ContainerSourceData = {
@@ -92,6 +93,29 @@ describe('Event Source ValidationUtils', () => {
         .isValid(ContainerSourceData)
         .then((valid) => expect(valid).toEqual(false));
       await eventSourceValidationSchema.validate(ContainerSourceData).catch((err) => {
+        expect(err.message).toBe('Required');
+        expect(err.type).toBe('required');
+      });
+    });
+  });
+
+  describe('PingSource : Event Source Validation', () => {
+    it('should validate the form data', async () => {
+      const defaultEventingData = getDefaultEventingData(EventSources.PingSource);
+      const mockData = _.cloneDeep(defaultEventingData);
+      await eventSourceValidationSchema
+        .isValid(mockData)
+        .then((valid) => expect(valid).toEqual(true));
+    });
+
+    it('should throw an error for required fields if empty', async () => {
+      const defaultEventingData = getDefaultEventingData(EventSources.PingSource);
+      const mockData = _.cloneDeep(defaultEventingData);
+      mockData.data.pingsource.schedule = '';
+      await eventSourceValidationSchema
+        .isValid(mockData)
+        .then((valid) => expect(valid).toEqual(false));
+      await eventSourceValidationSchema.validate(mockData).catch((err) => {
         expect(err.message).toBe('Required');
         expect(err.type).toBe('required');
       });
