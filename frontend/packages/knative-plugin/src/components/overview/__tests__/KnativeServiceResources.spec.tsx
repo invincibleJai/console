@@ -6,7 +6,7 @@ import {
   sampleKnativeRoutes,
   sampleKnativeRevisions,
   knativeServiceObj,
-} from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
+} from '../../../topology/__tests__/topology-knative-test-data';
 import KnativeServiceResources from '../KnativeServiceResources';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 import RevisionsOverviewList from '../RevisionsOverviewList';

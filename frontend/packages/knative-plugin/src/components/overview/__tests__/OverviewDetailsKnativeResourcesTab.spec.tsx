@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import { MockKnativeResources } from '@console/dev-console/src/components/topology/__tests__/topology-knative-test-data';
 import OperatorBackedOwnerReferences from '@console/internal/components/utils';
 import OverviewDetailsKnativeResourcesTab from '../OverviewDetailsKnativeResourcesTab';
 import KnativeServiceResources from '../KnativeServiceResources';
@@ -9,6 +8,12 @@ import RevisionsOverviewList from '../RevisionsOverviewList';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
 import EventSinkServicesOverviewList from '../EventSinkServicesOverviewList';
+import {
+  MockKnativeResources,
+  getEventSourceResponse,
+  sampleEventSourceSinkbinding,
+} from '../../../topology/__tests__/topology-knative-test-data';
+import { EventSourceCronJobModel } from '../../../models';
 
 type OverviewDetailsKnativeResourcesTabProps = React.ComponentProps<
   typeof OverviewDetailsKnativeResourcesTab
@@ -43,7 +48,10 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
   });
 
   it('should render EventSinkServicesOverviewList on sidebar', () => {
-    knItem.item = { ...knItem.item, ...{ obj: MockKnativeResources.eventSourceCronjob.data[0] } };
+    knItem.item = {
+      ...knItem.item,
+      ...{ obj: getEventSourceResponse(EventSourceCronJobModel).data[0] },
+    };
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
     expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);
   });
@@ -51,7 +59,7 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
   it('should render EventSinkServicesOverviewList on sidebar for sinkBinding', () => {
     knItem.item = {
       ...knItem.item,
-      ...{ obj: MockKnativeResources.eventSourceSinkbinding.data[0] },
+      ...{ obj: sampleEventSourceSinkbinding.data[0] },
     };
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
     expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);
