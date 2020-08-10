@@ -33,8 +33,8 @@ import {
   knativeCamelIntegrationsResourceWatchers,
 } from '../utils/get-knative-resources';
 import {
-  getDynamicEventSourcesWatchers,
   getDynamicEventingChannelWatchers,
+  getDynamicEventSourcesWatchers12,
 } from '../utils/fetch-dynamic-eventsources-utils';
 
 export const getKnativeResources = (namespace: string) => {
@@ -44,12 +44,15 @@ export const getKnativeResources = (namespace: string) => {
     ...knativeServingResourcesRoutesWatchers(namespace),
     ...knativeServingResourcesServicesWatchers(namespace),
     ...knativeEventingResourcesSubscriptionWatchers(namespace),
-    ...getDynamicEventSourcesWatchers(namespace),
     ...getDynamicEventingChannelWatchers(namespace),
     ...knativeEventingBrokerResourceWatchers(namespace),
     ...knativeEventingTriggerResourceWatchers(namespace),
     ...knativeCamelIntegrationsResourceWatchers(namespace),
   };
+};
+
+export const getKnativeDynamicResources12 = (namespace: string) => {
+  return getDynamicEventSourcesWatchers12(namespace);
 };
 
 export type TopologyConsumedExtensions =
@@ -81,6 +84,7 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
       id: 'knative-topology-model-factory',
       priority: 100,
       resources: getKnativeResources,
+      dynamicresources: getKnativeDynamicResources12,
       workloadKeys: ['ksservices'],
       getDataModel: getKnativeTopologyDataModel,
       isResourceDepicted: getIsKnativeResource,

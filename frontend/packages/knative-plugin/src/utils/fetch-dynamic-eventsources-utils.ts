@@ -120,6 +120,25 @@ export const getDynamicEventSourcesWatchers = (namespace: string) => {
   }, {});
 };
 
+export const getDynamicEventSourcesWatchers12 = (namespace: string) => {
+  return fetchEventSourcesCrd()
+    .then((data) => {
+      return data.reduce((acc, model) => {
+        acc[referenceForModel(model)] = {
+          isList: true,
+          kind: referenceForModel(model),
+          namespace,
+          optional: true,
+        };
+        return acc;
+      }, {});
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.warn('Error fetching CRDs for dynamic event sources', err);
+    });
+};
+
 export const getDynamicEventSourceModel = (resourceRef: string): K8sKind => {
   return eventSourceData.eventSourceModels.find(
     (model: K8sKind) => referenceForModel(model) === resourceRef,

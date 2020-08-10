@@ -40,7 +40,6 @@ import {
 } from './utils/get-knative-resources';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import {
-  fetchEventSourcesCrd,
   fetchChannelsCrd,
   getDynamicEventSourcesResourceList,
   getDynamicChannelResourceList,
@@ -66,7 +65,7 @@ type ConsumedExtensions =
   | TopologyConsumedExtensions;
 
 // Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
-fetchEventSourcesCrd();
+// fetchEventSourcesCrd();
 fetchChannelsCrd();
 const plugin: Plugin<ConsumedExtensions> = [
   {

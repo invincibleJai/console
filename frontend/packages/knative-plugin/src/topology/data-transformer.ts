@@ -16,6 +16,7 @@ import {
   getKnativeServingServices,
 } from '../utils/get-knative-resources';
 import {
+  fetchEventSourcesCrd,
   getDynamicEventSourcesModelRefs,
   getDynamicChannelModelRefs,
 } from '../utils/fetch-dynamic-eventsources-utils';
@@ -37,7 +38,7 @@ const addKnativeTopologyData = (
   addToTopologyDataModel(knativeResourceDataModel, graphModel);
 };
 
-export const getKnativeTopologyDataModel = (
+export const getKnativeTopologyDataModel = async (
   namespace: string,
   resources: TopologyDataResources,
 ): Promise<Model> => {
@@ -47,6 +48,7 @@ export const getKnativeTopologyDataModel = (
     getKnativeServingRoutes,
     getKnativeServingServices,
   ];
+  await fetchEventSourcesCrd();
   const eventSourceProps = getDynamicEventSourcesModelRefs();
   const channelResourceProps = getDynamicChannelModelRefs();
   const knativeTopologyGraphModel: Model = { nodes: [], edges: [] };

@@ -22,6 +22,8 @@ namespace ExtensionProperties {
     priority: number;
     /** Resources to be fetched from useK8sWatchResources hook. */
     resources?: (namespace: string) => WatchK8sResources<any>;
+    /** Resources to be fetched from useK8sWatchResources hook. */
+    dynamicresources?: (namespace: string) => Promise<any>;
     /** Keys in resources containing workloads. */
     workloadKeys?: string[];
     /** Getter for the data model factory */

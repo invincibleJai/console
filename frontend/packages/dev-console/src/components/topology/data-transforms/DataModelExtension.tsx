@@ -9,13 +9,25 @@ interface DataModelExtensionProps {
 
 export const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataModelFactory }) => {
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
-  const { id, priority, resources } = dataModelFactory.properties;
+  const { id, priority, resources, dynamicresources } = dataModelFactory.properties;
   const workloadKeys = useDeepCompareMemoize(dataModelFactory.properties.workloadKeys);
   const extensionContext = React.useRef<ModelExtensionContext>({
     priority,
     workloadKeys,
     resources,
+    dynamicresources,
   });
+
+  // dataModelFactory.properties
+  //   .dynamicresources()
+  //   .then((getter) => {
+  //     extensionContext.current.dataModelGetter = getter;
+  //     dataModelContext.updateExtension(id, extensionContext.current);
+  //   })
+  //   .catch(() => {
+  //     extensionContext.current.dataModelGetter = () => Promise.resolve({});
+  //     dataModelContext.updateExtension(id, extensionContext.current);
+  //   });
 
   React.useEffect(() => {
     const storedContext = dataModelContext.getExtension(id);
@@ -24,6 +36,7 @@ export const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataMode
         priority,
         workloadKeys,
         resources,
+        dynamicresources,
       };
       dataModelContext.updateExtension(id, extensionContext.current);
 
@@ -49,7 +62,15 @@ export const DataModelExtension: React.FC<DataModelExtensionProps> = ({ dataMode
           dataModelContext.updateExtension(id, extensionContext.current);
         });
     }
-  }, [dataModelContext, dataModelFactory.properties, id, priority, resources, workloadKeys]);
+  }, [
+    dataModelContext,
+    dataModelFactory.properties,
+    id,
+    priority,
+    resources,
+    workloadKeys,
+    dynamicresources,
+  ]);
 
   return null;
 };

@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import * as _ from 'lodash';
 import { Model } from '@patternfly/react-topology';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
@@ -17,6 +18,7 @@ import { WORKLOAD_TYPES } from '../topology-utils';
 export type ModelExtensionContext = {
   priority: number;
   resources?: (namespace: string) => WatchK8sResources<any>;
+  dynamicresources?: (namespace: string) => Promise<any>;
   workloadKeys?: string[];
   dataModelGetter?: TopologyDataModelGetter;
   dataModelDepicter?: TopologyDataModelDepicted;
@@ -86,23 +88,81 @@ export class ExtensibleModel {
 
   public updateWatchedResources = (): void => {
     const extensionKeys = Object.keys(this.extensions);
-    this.watchedResources = extensionKeys.reduce((acc, key) => {
-      if (this.extensions[key].resources) {
-        const resList = this.extensions[key].resources(this.namespace);
-        Object.keys(resList).forEach((resKey) => {
-          if (!acc[resKey]) {
-            acc[resKey] = resList[resKey];
-          }
-        });
+    this.watchedResources = extensionKeys.reduce(
+      (acc, key) => {
+        if (this.extensions[key].resources) {
+          const resList = this.extensions[key].resources(this.namespace);
+          Object.keys(resList).forEach((resKey) => {
+            if (!acc[resKey]) {
+              acc[resKey] = resList[resKey];
+            }
+          });
+        }
+        return acc;
+      },
+      { ...getBaseWatchedResources(this.namespace), ...this.watchedResources },
+    );
+  };
+
+  public updateDynamicWatchedResources = (): void => {
+    const extensionKeys = Object.keys(this.extensions);
+    const promiseData = [];
+    // extensionKeys.reduce((acc, key) => {
+    //   if (this.extensions[key].dynamicresources) {
+    //     promiseData.push(
+    //       this.extensions[key]
+    //         .dynamicresources(this.namespace)
+    //         .then((resList) => {
+    //           Object.keys(resList).forEach((resKey) => {
+    //             if (!acc[resKey]) {
+    //               acc[resKey] = resList[resKey];
+    //             }
+    //           });
+    //         })
+    //         .catch((err) => {
+    //           // eslint-disable-next-line no-console
+    //           console.warn('Error fetching CRDs for dynamic event sources', err);
+    //         }),
+    //     );
+    //   }
+    //   return acc;
+    // }, this.watchedResources);
+
+    _.forIn(extensionKeys, (val: string) => {
+      if (this.extensions[val].dynamicresources) {
+        promiseData.push(
+          this.extensions[val]
+            .dynamicresources(this.namespace)
+            .then((resList) => {
+              // Object.keys(resList).forEach((resKey) => {
+              //   if (!acc[resKey]) {
+              //     acc[resKey] = resList[resKey];
+              //   }
+              // });
+              return resList;
+            })
+            .catch((err) => {
+              // eslint-disable-next-line no-console
+              console.warn('Error fetching CRDs for dynamic event sources', err);
+            }),
+        );
       }
-      return acc;
-    }, getBaseWatchedResources(this.namespace));
+    });
+    Promise.all(promiseData)
+      .then(([data]) => {
+        this.watchedResources = { ...this.watchedResources, ...data };
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.warn('Error fetching CRDs for dynamic event sources', err);
+      });
   };
 
   public updateExtension = (id: string, extension: ModelExtensionContext): void => {
     this.extensions[id] = { ...(this.extensions[id] || {}), ...extension };
     this.updateExtensionsLoaded();
     this.updateWatchedResources();
+    this.updateDynamicWatchedResources();
   };
 
   public getWorkloadResources = (resources: TopologyDataResources): K8sResourceKind[] => {
