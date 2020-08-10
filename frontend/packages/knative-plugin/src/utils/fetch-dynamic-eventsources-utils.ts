@@ -76,7 +76,7 @@ export const fetchEventSourcesCrd = async () => {
 export const useEventSourceModels = (): EventSourcetData => {
   const [modelsData, setModelsData] = useSafetyFirst({ loaded: false, eventSourceModels: [] });
   useEffect(() => {
-    if (!eventSourceData.loaded) {
+    if (eventSourceData.eventSourceModels.length === 0) {
       fetchEventSourcesCrd()
         .then((data) => {
           setModelsData({ loaded: true, eventSourceModels: data });
@@ -136,9 +136,6 @@ export const isDynamicEventResourceKind = (resourceRef: string): boolean => {
   );
   return index !== -1;
 };
-
-export const hideDynamicEventSourceCard = () =>
-  eventSourceData.eventSourceModels && eventSourceData.eventSourceModels.length > 0;
 
 export const fetchChannelsCrd = async () => {
   const url = 'api/console/knative-channels';
@@ -206,13 +203,32 @@ export const getDynamicEventingChannelWatchers = (namespace: string) => {
     return acc;
   }, {});
 };
+export const useChannelResourcesList = (): string[] => {
+  const [modelRefs, setModelRefs] = useSafetyFirst<string[]>([]);
+  useEffect(() => {
+    if (eventSourceData.eventSourceChannels.length === 0) {
+      fetchChannelsCrd()
+        .then((data) => {
+          setModelRefs(data.map((model: K8sKind) => referenceForModel(model)));
+        })
+        .catch((err) => {
+          setModelRefs([]);
+          // eslint-disable-next-line no-console
+          console.warn('Error fetching CRDs for dynamic channel model refs', err);
+        });
+    } else {
+      setModelRefs(
+        eventSourceData.eventSourceChannels.map((model: K8sKind) => referenceForModel(model)),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return modelRefs;
+};
 
 export const getDynamicChannelModelRefs = (): string[] => {
   return eventSourceData.eventSourceChannels.map((model: K8sKind) => referenceForModel(model));
 };
-
-export const hideDynamicChannelCard = () =>
-  eventSourceData.eventSourceChannels && eventSourceData.eventSourceChannels.length > 0;
 
 export const isEventingChannelResourceKind = (resourceRef: string): boolean => {
   const index = eventSourceData.eventSourceChannels.findIndex(

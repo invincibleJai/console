@@ -44,8 +44,6 @@ import {
   fetchChannelsCrd,
   getDynamicEventSourcesResourceList,
   getDynamicChannelResourceList,
-  hideDynamicEventSourceCard,
-  hideDynamicChannelCard,
 } from './utils/fetch-dynamic-eventsources-utils';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
 import * as eventSourceIcon from './imgs/event-source.svg';
@@ -408,7 +406,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       description:
         'Create an event source to register interest in a class of events from a particular system',
       icon: eventSourceIcon,
-      hide: hideDynamicEventSourceCard,
     },
   },
   {
@@ -423,7 +420,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       description:
         'Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations',
       icon: channelIcon,
-      hide: hideDynamicChannelCard,
     },
   },
   ...topologyPlugin,

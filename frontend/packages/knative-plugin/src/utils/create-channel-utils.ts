@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { safeLoad } from 'js-yaml';
 import { checkAccess } from '@console/internal/components/utils';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { getDynamicChannelModelRefs } from './fetch-dynamic-eventsources-utils';
+import { useChannelResourcesList } from './fetch-dynamic-eventsources-utils';
 import {
   getGroupVersionKind,
   modelFor,
@@ -36,7 +36,7 @@ export const getChannelKind = (ref: string): string => {
 
 export const useChannelList = (namespace: string): ChannelListProps => {
   const [accessData, setAccessData] = useSafetyFirst({ loaded: false, channelList: [] });
-  const channelResourcesList = getDynamicChannelModelRefs();
+  const channelResourcesList = useChannelResourcesList();
   const accessList = [];
   React.useEffect(() => {
     _.forIn(channelResourcesList, (channelRef: string) => {
