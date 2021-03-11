@@ -9,6 +9,7 @@ import {
   getOwnedResources,
   useActivePerspective,
   useToast,
+  useBeforeUnloadWatchResource,
 } from '@console/shared/src';
 import {
   useK8sWatchResource,
@@ -43,6 +44,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const toastContext = useToast();
+  const beforeUnloadWatchResourceContext = useBeforeUnloadWatchResource();
   const buildsResource: WatchK8sResource = {
     kind: BuildModel.kind,
     namespace,
@@ -168,16 +170,22 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
       .then((resp) => {
         const createdBuildConfig = resp.find((d) => d.kind === BuildConfigModel.kind);
         const ownBuilds = getOwnedResources(createdBuildConfig, builds);
-        const link = `${resourcePathFromModel(
-          BuildModel,
-          `${createdBuildConfig.metadata.name}-${ownBuilds.length + 1}`,
-          createdBuildConfig.metadata.namespace,
-        )}/logs`;
+        const buildName = `${createdBuildConfig.metadata.name}-${ownBuilds.length + 1}`;
+        const link = `${resourcePathFromModel(BuildModel, buildName, namespace)}/logs`;
+        beforeUnloadWatchResourceContext.watchResource(
+          {
+            kind: BuildModel.kind,
+            name: buildName,
+            namespace,
+          },
+          (resData: K8sResourceKind) =>
+            ['New', 'Pending', 'Running'].includes(resData.status?.phase),
+        );
         toastContext.addToast({
           variant: AlertVariant.info,
           title: t('devconsole~JAR file uploading'),
           content: t(
-            'devconsole~JAR file is uploading to {{namespace}}. This may take a few minutes. If you exit the browser while upload is in progress it may fail',
+            'devconsole~JAR file is uploading to {{namespace}}. You can view the upload progress in the build logs. This may take a few minutes. If you exit the browser while upload is in progress it may fail.',
             {
               namespace,
             },

@@ -57,25 +57,21 @@ const UploadJarPage: React.FunctionComponent<UploadJarPageProps> = ({ match }) =
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>
-        <title>{t('devconsole~Upload a JAR file')}</title>
+        <title>{t('devconsole~Upload JAR file')}</title>
       </Helmet>
-      <PageHeading title={t('devconsole~Upload a JAR file')}>
+      <PageHeading title={t('devconsole~Upload JAR file')}>
         {t('devconsole~Upload a JAR file from your local desktop to OpenShift')}
       </PageHeading>
-      {isResourceLoaded() ? (
-        <QueryFocusApplication>
-          {(desiredApplication) => (
-            <UploadJar
-              forApplication={desiredApplication}
-              namespace={namespace}
-              projects={resources.projects as WatchK8sResultsObject<K8sResourceKind[]>}
-              builderImage={builderImage}
-            />
-          )}
-        </QueryFocusApplication>
-      ) : (
-        <LoadingBox />
-      )}
+      <QueryFocusApplication>
+        {(desiredApplication) => (
+          <UploadJar
+            forApplication={desiredApplication}
+            namespace={namespace}
+            projects={resources.projects as WatchK8sResultsObject<K8sResourceKind[]>}
+            builderImage={builderImage}
+          />
+        )}
+      </QueryFocusApplication>
     </NamespacedPage>
   );
 };

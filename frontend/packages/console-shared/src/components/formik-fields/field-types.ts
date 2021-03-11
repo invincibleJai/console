@@ -153,5 +153,9 @@ export interface BaseFileUploadProps extends FieldProps {
   hideDefaultPreview?: boolean;
   filenamePlaceholder?: string;
   onChange?: (value: File, fileName: string) => void;
-  dropzoneProps?: any;
+  dropzoneProps?: {
+    accept?: string;
+    maxSize?: number;
+    onDropRejected?: () => void;
+  };
 }
