@@ -14,14 +14,14 @@ import {
 } from './validation-schema';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 
-const fileNameRegex = /^(.*)+(\.jar)$/;
+const fileNameRegex = /^(.*)+(\.(jar|JAR))$/;
 
 export const fileUploadValidationSchema = (t: TFunction) =>
   yup.object().shape({
     name: yup
       .string()
       .matches(fileNameRegex, {
-        message: t('devconsole~Must be a valid JAR file.'),
+        message: t('devconsole~Must be a JAR file.'),
         excludeEmptyString: true,
       })
       .max(253, t('devconsole~Cannot be longer than 253 characters.'))

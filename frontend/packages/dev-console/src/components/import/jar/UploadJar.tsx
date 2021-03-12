@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
@@ -20,13 +20,13 @@ import { history, resourcePathFromModel } from '@console/internal/components/uti
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { sanitizeApplicationValue } from '@console/topology/src/utils';
 import { BuildModel, BuildConfigModel } from '@console/internal/models';
-import { Resources, UploadJarFormData } from '../import-types';
-import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
+import { BaseFormData, UploadJarFormData } from '../import-types';
 import UploadJarForm from './UploadJarForm';
 import { BuilderImage } from '../../../utils/imagestream-utils';
 import { createOrUpdateJarFile } from '../upload-jar-submit-utils';
 import { handleRedirect } from '../import-submit-utils';
 import { validationSchema } from '../upload-jar-validation-utils';
+import { getBaseInitialValues } from '../form-initial-values';
 
 export type UploadJarProps = {
   namespace: string;
@@ -56,19 +56,13 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
   const activeApplication = application !== ALL_APPLICATIONS_KEY ? application : '';
   const { name: imageName, recentTag: tag } = builderImage;
 
+  const initialBaseValues: BaseFormData = getBaseInitialValues(namespace, activeApplication);
   const initialValues: UploadJarFormData = {
-    project: {
-      name: namespace || '',
-      displayName: '',
-      description: '',
-    },
+    ...initialBaseValues,
     application: {
-      initial: sanitizeApplicationValue(activeApplication),
-      name: sanitizeApplicationValue(activeApplication),
-      selectedKey: activeApplication,
+      ...initialBaseValues.application,
       isInContext: !!sanitizeApplicationValue(activeApplication),
     },
-    name: '',
     fileUpload: {
       name: '',
       value: '',
@@ -76,83 +70,14 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
     },
     runtimeIcon: 'java',
     image: {
+      ...initialBaseValues.image,
       selected: imageName,
-      recommended: '',
       tag: tag.name,
       tagObj: tag,
-      ports: [],
-      isRecommending: false,
-      couldNotRecommend: false,
     },
-    serverless: {
-      scaling: {
-        minpods: '',
-        maxpods: '',
-        concurrencytarget: '',
-        concurrencylimit: '',
-        autoscale: {
-          autoscalewindow: '',
-          autoscalewindowUnit: '',
-          defaultAutoscalewindowUnit: 's',
-        },
-        concurrencyutilization: '',
-      },
-    },
-    route: {
-      disable: false,
-      create: true,
-      targetPort: '',
-      unknownTargetPort: '',
-      defaultUnknownPort: 8080,
-      path: '',
-      hostname: '',
-      secure: false,
-      tls: {
-        termination: '',
-        insecureEdgeTerminationPolicy: '',
-        caCertificate: '',
-        certificate: '',
-        destinationCACertificate: '',
-        privateKey: '',
-      },
-    },
-    resources: Resources.Kubernetes,
-    build: {
-      env: [],
-      triggers: {},
-      strategy: 'Source',
-    },
-    deployment: {
-      env: [],
-      triggers: {
-        image: true,
-        config: true,
-      },
-      replicas: 1,
-    },
-    labels: {},
-    limits: {
-      cpu: {
-        request: '',
-        requestUnit: 'm',
-        defaultRequestUnit: 'm',
-        limit: '',
-        limitUnit: 'm',
-        defaultLimitUnit: 'm',
-      },
-      memory: {
-        request: '',
-        requestUnit: 'Mi',
-        defaultRequestUnit: 'Mi',
-        limit: '',
-        limitUnit: 'Mi',
-        defaultLimitUnit: 'Mi',
-      },
-    },
-    healthChecks: healthChecksProbeInitialData,
   };
 
-  const handleSubmit = (values, actions) => {
+  const handleSubmit = (values: UploadJarFormData, actions: FormikHelpers<UploadJarFormData>) => {
     const imageStream = builderImage?.obj;
     const createNewProject = projects.loaded && _.isEmpty(projects.data);
     const {

@@ -54,7 +54,7 @@ const JarSection: React.FunctionComponent = () => {
             'devconsole~Java commands are Application specific and can be added to customize your Application.',
           )}
           data-test-id="upload-jar-form-java-args"
-          placeholder={t('devconsole~Enter Java command here')}
+          placeholder={t('devconsole~Enter Java commands here')}
         />
       </FormGroup>
     </FormSection>
